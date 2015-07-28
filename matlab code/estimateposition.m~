@@ -14,8 +14,11 @@ end
 warning off; 
 fval = zeros(numiter,1);
 for i=1:numiter
-    x0 = [randn(k,3)*10^-8, randn(k,1)]; 
-    fx = @(x)myfun2(x,y,grid_coord,k,lambda);
+    %x0 = [randn(k,3)*10^-8, randn(k,1)]; 
+    %fx = @(x)myfun2(x,y,grid_coord,k,lambda);
+    
+    fx = myfun3(x,y,grid_coord,k,lambda);
+    
     [xnew,fval(i)] = fminunc(fx,x0);
     
     %xout{i} = [xnew(:,1:3).*repmat(xnew(:,4),1,3), 1./xnew(:,4)];
@@ -55,3 +58,22 @@ end
 fx = fx + lambda*sum(x(:,4)); 
 
 end
+
+
+function fx = myfun3(x,y,grid_coord,k,lambda)
+
+n = length(y); 
+x2 = reshape(x,k,4);
+
+fx = 0;
+for j=1:k
+for i=1:n
+    fx = fx + (y(i) - x2(j,4)./norm(grid_coord(i,:)-x2(j,1:3))).^2; 
+end
+end
+
+% enforce constraint that transmembrane currents must sum to 0
+fx = fx + lambda*sum(x2(:,4)); 
+
+end
+
