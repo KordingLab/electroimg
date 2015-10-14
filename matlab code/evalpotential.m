@@ -7,7 +7,7 @@ function y = evalpotential(observation_position,neuron_data,app)
 % app is approximation of inverse function.
 
 if nargin==2
-app = .1;
+app = .0001;
 end 
 
 K = size(observation_position,2);
