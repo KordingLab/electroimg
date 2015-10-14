@@ -1,0 +1,5 @@
+plot(Sample,P(1,:))
+%%
+scatter3(Electrod_positions(1,:),Electrod_positions(2,:),Electrod_positions(3,:))
+hold on
+scatter3(P(3,:),P(4,:),P(5,:))

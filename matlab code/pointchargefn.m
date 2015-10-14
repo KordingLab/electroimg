@@ -1,4 +1,4 @@
-function err = pointchargefn(x,yobs,grid_pos)
+function err = pointchargefn(x,obs,Electrod_positions)
 % yobs = observed field (Nx1)
 % grid_pos = 3xN (pos of electrodes)
 % xest = estimate of charges
@@ -8,8 +8,7 @@ function err = pointchargefn(x,yobs,grid_pos)
 %     grid_pos = [xx(:),yy(:),zz(:)]';
 %     yobs = evalpotential(grid_pos,x0);
 % end
-
-yest = evalpotential(grid_pos,x);
-err = norm(yest-yobs);
-
+m = size(x,1)/4;
+yest = evalpotential(Electrod_positions,reshape(x,4,m));
+err = norm(yest-obs);
 end
