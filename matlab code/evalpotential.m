@@ -7,12 +7,12 @@ function y = evalpotential(observation_position,neuron_data,app)
 % app is approximation of inverse function.
 
 if nargin==2
-app = .0001;
+app = .01;
 end 
 
 K = size(observation_position,2);
 M = size(neuron_data,2);
 y = zeros(1,K);
 for i = 1:K
-y(i) = sum(neuron_data(1,:)./(app+sum((observation_position(:,i)*ones(1,M)-neuron_data(2:end,:)).^2,1).^.5));
+y(i) = sum(neuron_data(1,:)./(app+sum((observation_position(:,i)*ones(1,M)-neuron_data(2:end,:)).^-1,1).^.5));
 end
