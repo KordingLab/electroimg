@@ -9,5 +9,5 @@ function err = pointchargefn2(x,x1,obs,Electrod_positions)
 %     yobs = evalpotential(grid_pos,x0);
 % end
 yest = evalpotential(Electrod_positions,[x1,x]);
-err = norm(yest-obs);
+err =sum((yest-obs).^2);
 end

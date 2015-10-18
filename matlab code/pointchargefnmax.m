@@ -1,4 +1,4 @@
-function err = pointchargefn1(x,x2,obs,Electrod_positions)
+function err = pointchargefnmax(x,obs,Electrod_positions)
 % yobs = observed field (Nx1)
 % grid_pos = 3xN (pos of electrodes)
 % xest = estimate of charges
@@ -8,6 +8,7 @@ function err = pointchargefn1(x,x2,obs,Electrod_positions)
 %     grid_pos = [xx(:),yy(:),zz(:)]';
 %     yobs = evalpotential(grid_pos,x0);
 % end
-yest = evalpotential(Electrod_positions,[x,x2]);
-err =sum((yest-obs).^2);
+m = size(x,1)/4;
+yest = evalpotential(Electrod_positions,reshape(x,4,m));
+err = max(abs((yest-obs)));
 end
