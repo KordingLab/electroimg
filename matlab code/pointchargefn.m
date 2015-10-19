@@ -8,7 +8,12 @@ function err = pointchargefn(x,obs,Electrod_positions)
 %     grid_pos = [xx(:),yy(:),zz(:)]';
 %     yobs = evalpotential(grid_pos,x0);
 % end
+if size(x,2)==1
 m = size(x,1)/4;
 yest = evalpotential(Electrod_positions,reshape(x,4,m));
 err = norm(yest-obs);
+else
+    yest = evalpotential(Electrod_positions,x);
+err = norm(yest-obs);
+end
 end
