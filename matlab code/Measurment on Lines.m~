@@ -1,0 +1,33 @@
+close
+neuron_data = randn(4,2);
+for i = 1:30  
+x1 = randn;
+x2 = randn;
+y1 = randn;
+y2 = randn;
+z1 = randn;
+z2 = randn;
+d = 50;
+X = x1:(x2-x1)/d:x2;
+Y = y1:(y2-y1)/d:y2;
+Z = z1:(z2-z1)/d:z2;
+f = evalpotential([X;Y;Z],neuron_data);
+subplot(5,6,i)
+plot(f)
+end
+
+%% On parallel
+close
+neuron_data = 1-2*rand(4,4);
+[X,Y,Z] = meshgrid(-1:.5:1,-1:.5:1,-1:.5:1);
+X = reshape(X,1,125);
+Y = reshape(Y,1,125);
+Z = reshape(Z,1,125);
+D = evalpotential([X;Y;Z],neuron_data);
+for i = 1:5
+    for j = 1:5
+        subplot(5,5,5*i+j-5)
+        plot(D(25*i+5*j-29:25*i+5*j-25))
+    end
+end
+        
