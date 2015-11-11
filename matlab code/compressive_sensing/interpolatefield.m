@@ -28,7 +28,7 @@ if length(Dict)==2
     
         variable Frec(n1,n2)
         coef = Dict{1}*Frec*Dict{2}';
-        errs = (ydata - Frec(whichsamp)).^2;
+        errs = 1/numel(Frec)*sum(sum((ydata - Frec(whichsamp)).^2));
         minimize(norm(coef(:),1))
         subject to
         errs<errtol
@@ -53,8 +53,34 @@ elseif length(Dict)==3
             siz= [siz(2:end) siz(1)]; 
             coef = shiftdim(coef,1); 
         end
+        errs = 1/numel(Frec)*sum(sum((ydata - Frec(whichsamp)).^2));
+        %errs = (ydata - Frec(whichsamp)).^2;
+        minimize(norm(coef(:),1))
+        subject to
+        errs<errtol
+    cvx_end
+
+elseif length(Dict)==4
     
-        errs = (ydata - Frec(whichsamp)).^2;
+    n1 = stacksz(1);
+    n2 = stacksz(2);
+    n3 = stacksz(3);
+    n4 = stacksz(4);
+    
+    siz = stacksz;
+    cvx_begin
+        cvx_solver mosek
+    
+        variable Frec(n1,n2,n3,n4)
+        
+        % compute multidimensional DCT
+        for i=1:4 
+            coef = reshape(Dict{i}'*reshape(Frec,siz(1),[]),siz); 
+            siz= [siz(2:end) siz(1)]; 
+            coef = shiftdim(coef,1); 
+        end
+        errs = 1/numel(Frec)*sum(sum((ydata - Frec(whichsamp)).^2));
+        %errs = (ydata - Frec(whichsamp)).^2;
         minimize(norm(coef(:),1))
         subject to
         errs<errtol
