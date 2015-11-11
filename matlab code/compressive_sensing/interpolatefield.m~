@@ -1,0 +1,42 @@
+function interpolatefield(F0,numsamp)
+
+[n1,n2] = size(F0);
+N = n1*n2;
+whichsamp = randi(N,round(numsamp*N),1);
+
+Dr = dctmtx(n1);
+
+ydata = F0(whichsamp);
+
+cvx_begin
+   variable Xrec(n1,n2)
+   coef = Dr*Xrec*Dc';
+   errs = sum(sum((field_samp - Xrec(whichsamp)).^2));
+   minimize( errs +lambda*norm(coef(:),1) )
+cvx_end
+
+
+
+Xtest = nan(71,40); 
+Xtest(whichsamp) = tmp(whichsamp);
+Fhat = dct2(Xtest);
+[val,id] = sort(abs(Fhat(:)),'descend');
+Fhat(id(101:end))=0;
+Frecov = idct2(Fhat);
+
+
+
+whichsamp = randi(71*40,round(0.5*(71*40)),1);
+tmp = F0(:,:,10);
+
+figure; imagesc(Xtest)
+
+
+
+
+
+
+
+end
+
+
