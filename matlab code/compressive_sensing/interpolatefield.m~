@@ -1,40 +1,61 @@
-function interpolatefield(F0,numsamp)
+function [Frec,whichsamp,Err] = interpolatefield(F0,numsamp)
 
-[n1,n2] = size(F0);
-N = n1*n2;
+N = numel(F0);
 whichsamp = randi(N,round(numsamp*N),1);
-
-Dr = dctmtx(n1);
-
 ydata = F0(whichsamp);
 
-cvx_begin
-   variable Xrec(n1,n2)
-   coef = Dr*Xrec*Dc';
-   errs = sum(sum((field_samp - Xrec(whichsamp)).^2));
-   minimize( errs +lambda*norm(coef(:),1) )
-cvx_end
+stacksz = size(F0);
+Frec = solveL1problem(ydata,whichsamp,stacksz);
+Err = norm(Frec(:)-F0(:))./norm(F0(:));
 
+end
 
+function Frec = solveL1problem(ydata,whichsamp,stacksz)
 
-Xtest = nan(71,40); 
-Xtest(whichsamp) = tmp(whichsamp);
-Fhat = dct2(Xtest);
-[val,id] = sort(abs(Fhat(:)),'descend');
-Fhat(id(101:end))=0;
-Frecov = idct2(Fhat);
+for i=1:length(stacksz)
+    Dict{i} = dctmtx(stacksz(i));
+end
 
+cvx_precision medium
 
+if length(Dict)==2
+    n1 = stacksz(1);
+    n2 = stacksz(2);
 
-whichsamp = randi(71*40,round(0.5*(71*40)),1);
-tmp = F0(:,:,10);
+    cvx_begin
+        variable Frec(n1,n2)
+        coef = Dr*Frec*Dc';
+        errs = (ydata - Frec(whichsamp)).^2;
+        minimize(norm(coef(:),1))
+        subject to
+        errs<errtol
+    cvx_end
 
-figure; imagesc(Xtest)
+elseif length(Dict)==3
+    
+    n1 = stacksz(1);
+    n2 = stacksz(2);
+    n3 = stacksz(3);
 
-
-
-
-
+    for i=1:ndim
+        a=reshape(dct(reshape(a,siz(1),[]),ww{i},ind{i}), siz); % run dct along vectors (1st dimension)
+        siz=[siz(2:end) siz(1)];                   % circular shift of size array by 1
+        a=shiftdim(a,1);                           % circular shift dimensions by 1
+    end
+    
+    cvx_begin
+        variable Frec(n1,n2,n3)
+        for i=1:n3
+            coef1(:,:,i) = Dr*Frec*Dc';
+        end
+        errs = (ydata - Frec(whichsamp)).^2;
+        minimize(norm(coef(:),1))
+        subject to
+        errs<errtol
+    cvx_end
+    
+    
+end
 
 
 end
