@@ -3,11 +3,11 @@
 % charges are shown by a spectrum in red to blue color.
 
 close
-N = 6; %% number of neurons
+N = 1; %% number of neurons
 neuron_data = 1-2*rand(4,N);
 neuron_data(1,:) = 1-2*floor(2*rand(1,N));
-d1 = 50; % columwise resulotionn
-d2 = 5; % planar resulotion
+d1 = 100; % columwise resulotionn
+d2 = 10; % planar resulotion
 [X,Y,Z] = meshgrid(-1:2/(d2-1):1,-1:2/(d2-1):1,-1:2/(d1-1):1);
 d = d1*(d2^2);
 X = reshape(X,1,d);
@@ -28,7 +28,7 @@ for i = 1:d2
         intensplus = length(find(Neuronplus==i*d2+j-d2));
         intensminus = length(find(Neuronminus==i*d2+j-d2));
         I = intensplus-intensminus;
-        axis([-1 1 -5-N/4 5+N/4])
+        axis([-1 1 -5-1.5*sqrt(N) 5+1.5*sqrt(N)])
         I = 5*I/N;
         I = min(.2,I);
         I = max(-.2,I);

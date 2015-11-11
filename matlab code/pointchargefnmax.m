@@ -10,5 +10,5 @@ function err = pointchargefnmax(x,obs,Electrod_positions)
 % end
 m = size(x,1)/4;
 yest = evalpotential(Electrod_positions,reshape(x,4,m));
-err = max(abs((yest-obs)));
+err = norm(yest-obs);
 end
