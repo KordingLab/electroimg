@@ -1,4 +1,4 @@
-function [Frec,whichsamp,Err] = interpolatefield(F0,numsamp,errtol)
+function [Frec,whichsamp] = interpolatefield(F0,numsamp,errtol)
 
 N = numel(F0);
 whichsamp = randi(N,round(numsamp*N),1);
@@ -6,7 +6,6 @@ ydata = F0(whichsamp);
 
 stacksz = size(F0);
 Frec = solveL1problem(ydata,whichsamp,stacksz,errtol);
-Err = norm(Frec(:)-F0(:))./norm(F0(:));
 
 end
 
@@ -28,10 +27,12 @@ if length(Dict)==2
     
         variable Frec(n1,n2)
         coef = Dict{1}*Frec*Dict{2}';
-        errs = 1/numel(Frec)*sum(sum((ydata - Frec(whichsamp)).^2));
+        %errs = (ydata - Frec(whichsamp)).^2;
+        %errs = 1/numel(Frec)*sum(sum((ydata - Frec(whichsamp)).^2));
         minimize(norm(coef(:),1))
         subject to
-        errs<errtol
+        %errs<=errtol
+        ydata == Frec(whichsamp)
     cvx_end
 
 elseif length(Dict)==3
@@ -53,11 +54,12 @@ elseif length(Dict)==3
             siz= [siz(2:end) siz(1)]; 
             coef = shiftdim(coef,1); 
         end
-        errs = 1/numel(Frec)*sum(sum((ydata - Frec(whichsamp)).^2));
+        %errs = 1/numel(Frec)*sum(sum((ydata - Frec(whichsamp)).^2));
         %errs = (ydata - Frec(whichsamp)).^2;
         minimize(norm(coef(:),1))
         subject to
-        errs<errtol
+        %errs<=errtol
+        ydata == Frec(whichsamp)
     cvx_end
 
 elseif length(Dict)==4
@@ -79,11 +81,12 @@ elseif length(Dict)==4
             siz= [siz(2:end) siz(1)]; 
             coef = shiftdim(coef,1); 
         end
-        errs = 1/numel(Frec)*sum(sum((ydata - Frec(whichsamp)).^2));
+        %errs = 1/numel(Frec)*sum(sum((ydata - Frec(whichsamp)).^2));
         %errs = (ydata - Frec(whichsamp)).^2;
         minimize(norm(coef(:),1))
         subject to
-        errs<errtol
+        %errs<=errtol
+        ydata == Frec(whichsamp)
     cvx_end
     
 end
