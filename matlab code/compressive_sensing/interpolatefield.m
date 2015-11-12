@@ -15,24 +15,22 @@ for i=1:length(stacksz)
     Dict{i} = dctmtx(stacksz(i));
 end
 
-cvx_precision best
-
 if length(Dict)==2
     n1 = stacksz(1);
     n2 = stacksz(2);
 
     cvx_begin
-    
+        cvx_precision low
         cvx_solver mosek
     
         variable Frec(n1,n2)
         coef = Dict{1}*Frec*Dict{2}';
-        %errs = (ydata - Frec(whichsamp)).^2;
+        errs = (ydata - Frec(whichsamp)).^2;
         %errs = 1/numel(Frec)*sum(sum((ydata - Frec(whichsamp)).^2));
         minimize(norm(coef(:),1))
         subject to
-        %errs<=errtol
-        ydata == Frec(whichsamp)
+        errs<=errtol
+        %ydata == Frec(whichsamp)
     cvx_end
 
 elseif length(Dict)==3
@@ -42,24 +40,39 @@ elseif length(Dict)==3
     n3 = stacksz(3);
     
     siz = stacksz;
-
+    
+    %for i=1:n3 
+    %    RBF(:,i) = exp(-(([1:n3] - i).^2./60)); 
+    %end
+    
     cvx_begin
+        cvx_precision low
         cvx_solver mosek
     
         variable Frec(n1,n2,n3)
         
         % compute multidimensional DCT
+        %for i=1:3 
+        %    coef = reshape(Dict{i}'*reshape(Frec,siz(1),[]),siz); 
+        %    siz= [siz(2:end) siz(1)]; 
+        %    coef = shiftdim(coef,1); 
+        %end
+        
+        coef = Frec;
         for i=1:3 
-            coef = reshape(Dict{i}'*reshape(Frec,siz(1),[]),siz); 
+            coef = reshape(Dict{i}'*reshape(coef,siz(1),[]),siz); 
             siz= [siz(2:end) siz(1)]; 
             coef = shiftdim(coef,1); 
         end
+        
+        %coef = RBF'*coef;
+        
         %errs = 1/numel(Frec)*sum(sum((ydata - Frec(whichsamp)).^2));
-        %errs = (ydata - Frec(whichsamp)).^2;
+        errs = (ydata - Frec(whichsamp)).^2;
         minimize(norm(coef(:),1))
         subject to
-        %errs<=errtol
-        ydata == Frec(whichsamp)
+        errs<=errtol
+        %ydata == Frec(whichsamp)
     cvx_end
 
 elseif length(Dict)==4
