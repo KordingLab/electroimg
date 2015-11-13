@@ -1,4 +1,4 @@
-function [MaxPosition,MinPosition] = Recon_Max_in_all_patchs(Frec)
+function [MaxPosition,MinPosition] = Recon_Max_in_all_patches(Frec)
 % Frec is the a collection of all patchs. Here size of each patch are set
 % to 30*30*30 and they overlap in half.
 % MaxPos and MinPos are location of local maximums and minimums in all
