@@ -68,11 +68,11 @@ elseif length(Dict)==3
         %coef = RBF'*coef;
         
         %errs = 1/numel(Frec)*sum(sum((ydata - Frec(whichsamp)).^2));
-        errs = (ydata - Frec(whichsamp)).^2;
+        %errs = (ydata - Frec(whichsamp)).^2;
         minimize(norm(coef(:),1))
         subject to
-        errs<=errtol
-        %ydata == Frec(whichsamp)
+        %errs<=errtol
+        ydata == Frec(whichsamp)
     cvx_end
 
 elseif length(Dict)==4
