@@ -11,7 +11,7 @@ for i=1:L
     idcol = i;
     [valtmp,idrow] = min(D2(:,i));
     if valtmp<=thresh
-        Matches(:,i) = [idrow;idcol];
+        Matches(:,i) = [idrow;sortid(idcol)];
         dvec(i) = valtmp;
     end
     D2(idrow,:)=100;
@@ -20,6 +20,10 @@ end
 
 idd = dvec>thresh;
 Matches(:,idd)=[];
+
+id = find(sum(Matches)==0);
+Matches(:,id)=[];
+dvec(id)=[];
 
 numcorrect = size(Matches,2);
 numgt = size(C0,2);
