@@ -3,7 +3,7 @@ load('NeuroData-11-11(2).mat')
 overlapsz = 20;
 
 parpool(16)
-for ii=4
+for ii=1:4
 for i=1:3; 
     for j=1:5; 
         parfor k=1:6; 
