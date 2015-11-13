@@ -1,7 +1,7 @@
 function [dvec,TP,FP,M,Matches] = centroiderror_missrates(C0,C1,thresh)
 
 D = pdist2(C0',C1');
-[vals,sortid] = sort(min(D),'ascend');
+[vals,sortid] = sort(min(D),'ascend'); 
 L = length(find(vals<=thresh));
 D2 = pdist2(C0',C1(:,sortid)');
 
