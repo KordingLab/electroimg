@@ -1,0 +1,31 @@
+function Index = MinMaxBox(Input,d)
+x = size(Input,1);
+y = size(Input,2);
+z = size(Input,3);
+Index = zeros(x+2*d+1,y+2*d+1,z+2*d+1);
+J = zeros(x+2*d+1,y+2*d+1,z+2*d+1);
+J(d+1:x+d,d+1:y+d,d+1:z+d) = Input;
+Input = J;
+for i = -d:d
+    for j = -d:d
+        for k = -d:d
+            J = zeros(x+2*d+1,y+2*d+1,z+2*d+1);
+            J(d+i+1:x+d+i,d+j+1:y+d+j,d+k+1:z+d+k) = Input(d+1:x+d,d+1:y+d,d+1:z+d);
+            J = Input - J;
+            J = find(J>0)
+            [a, b, c] = ind2sub([x+2*d+1,y+2*d+1,z+2*d+1],J);
+            J = zeros(x+2*d+1,y+2*d+1,z+2*d+1);
+            J(a,:,:) = 1;
+            J(:,b,:) = J(:,b,:) +1;
+            J(:,:,c) = J(:,:,c) +1;
+            J = floor(J/3);
+            Index = Index + J;
+        end
+    end
+end
+Index(1:d,:,:)=0;
+Index(:,1:d,:)=0;
+Index(:,:,1:d)=0;
+Index(end-d:end,:,:)=0;
+Index(:,end-d:end,:)=0;
+Index(:,:,end-d:end)=0;
