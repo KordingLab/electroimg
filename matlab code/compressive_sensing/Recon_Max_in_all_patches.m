@@ -5,16 +5,24 @@ function [MaxPosition,MinPosition] = Recon_Max_in_all_patches(Frec)
 % patchs
 MaxPosition = [];
 MinPosition = [];
-for i=1:3;
-    for j=1:6;
-        for k=1:7;
+P = 30;
+Q = 25;
+
+for i=1;
+    
+    for j=1:4;
+        
+        for k=1:5;
             z = Frec{i,j,k};
-            out = convn_fft(z,ones(3,3,3));
-            [Maxima,MaxPos,Minima,MinPos]=MinimaMaxima3D(out,1,0);
-            Maxpos = [(i-1)*15*ones(30,1),(j-1)*15*ones(30,1),(k-1)*15*ones(30,1)] + Maxpos;
-            Maxposition = [Maxposition;Maxpos];
-            Minpos = [(i-1)*15*ones(30,1),(j-1)*15*ones(30,1),(k-1)*15*ones(30,1)] + Minpos;
-            Minposition = [Minposition;Minpos];
+            out = convn_fft(z,ones(4,4,4));
+            [Maxima,Maxpos,Minima,Minpos]=MinimaMaxima3D(out,1,0);
+            a = size(Maxpos,1);
+            Maxpos = [(i-1)*Q*ones(a,1),(j-1)*Q*ones(a,1),(k-1)*Q*ones(a,1)] + Maxpos;
+            MaxPosition = [MaxPosition;Maxpos];
+            a = size(Minpos,1);
+            size([(i-1)*Q*ones(a,1),(j-1)*Q*ones(a,1),(k-1)*Q*ones(a,1)]);
+            Minpos = [(i-1)*Q*ones(a,1),(j-1)*Q*ones(a,1),(k-1)*Q*ones(a,1)] + Minpos;
+            MinPosition = [MinPosition;Minpos];
         end
     end
 end

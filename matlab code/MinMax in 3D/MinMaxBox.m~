@@ -1,4 +1,5 @@
 function Index = MinMaxBox(Input,d)
+% output is the rank of each array in a cube of lenght d. To find loca maxmium wright: find(Index == d^3-1). 
 x = size(Input,1);
 y = size(Input,2);
 z = size(Input,3);
@@ -17,7 +18,7 @@ for i = -d:d
         end
     end
 end
-Index = Ind
+Index = Index - .5;
 Index(1:d,:,:)=0;
 Index(:,1:d,:)=0;
 Index(:,:,1:d)=0;
