@@ -7,17 +7,17 @@ while(T==1)
     K = find(lap<r);
     r = r - .000005;
     P = size(K,1);
-    if(P<3000)
+    if(P<2000)
         T = 0;
     end
 end
 A = zeros(60,100,125);
 [a,b,c] = ind2sub([60-5,100-5,125-5],K);
 T = 1;
-r = 0;
+r1 = .0004;
 while(T==1)
-    K = find(lap>r);
-    r = r + .000005;
+    K = find(lap>r1);
+    r1 = r1 + .000005;
     P = size(K,1);
     if(P<300)
         T = 0;
@@ -25,8 +25,11 @@ while(T==1)
 end
 A = zeros(60,100,125);
 [a2,b2,c2] = ind2sub([60-5,100-5,125-5],K);
-
-scatter3(2*a-60,2*b-100,2*c-150,'.r')
-hold on;
 scatter3(aa(:,3),aa(:,2),aa(:,1),'.k')
+hold on;
 scatter3(2*a2-60,2*b2-100,2*c2-150,'.b')
+hold on;
+scatter3(2*a-60,2*b-100,2*c-150,100*ones(1,size(a,1)),'.r')
+scatter3(neuron(:,3),neuron(:,2),neuron(:,1),'.c')
+%legend('Pyramidal Neuron','Positive sources(soma)','Negetive sources(body)');
+%set(gca,'fontsize',18)
