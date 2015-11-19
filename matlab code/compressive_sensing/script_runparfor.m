@@ -2,10 +2,9 @@ load('NeuroData-11-11(2).mat')
 
 overlapsz = 25;
 
-parpool(16)
-for ii=1:3
-for i=1:2; 
-    for j=1:4; 
+for ii=1
+for i=2; 
+    for j=4; 
         parfor k=1:5; 
             F0 = newData((i-1)*overlapsz +1 : min((i-1)*overlapsz +30,60),...
                 (j-1)*overlapsz +1 : min((j-1)*overlapsz +30,100),...
