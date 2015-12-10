@@ -20,7 +20,7 @@ data = zeros(110,102,300);
 s = [];
 for i = 1:110
     for j = 1:102
-        I = find((X-Xb(i)).^2+(Y-Yb(j)).^2<800);
+        I = find((X-Xb(i)).^2+(Y-Yb(j)).^2<400);
         if(size(I,2)<1)
             I = find((X-Xb(i)).^2+(Y-Yb(j)).^2<900);
         end
@@ -35,12 +35,12 @@ end
 %m = zeros(1,300);
 close
 for i = 31:120
-    i
-    imagesc(fliplr(flipud(tanh(.10*data(:,:,i)))))
+    imagesc(conv2(data(:,:,i),fspecial('gaussian',4,3),'same'))
+    %imagesc(fliplr(flipud(tanh(.10*data(:,:,i)))))
     %  imagesc(fliplr(flipud(min(max((squeeze(data(:,:,i)/5).^3),-50),50))))
     %Del(:,:,i) = del2(squeeze(data(:,:,i)));
     colormap(gray)
-    caxis([-1,1])
+    caxis([-8,8])
     %m(i) = mean(mean(squeeze(data(:,:,i))));
     pause;
     i
