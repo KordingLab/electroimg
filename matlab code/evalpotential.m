@@ -10,5 +10,5 @@ K = size(observation_position,2);
 M = size(neuron_data,2);
 y = zeros(1,K);
 for i = 1:K
-y(i) = sum(neuron_data(1,:)./(.005+sum((observation_position(:,i)*ones(1,M)-neuron_data(2:end,:)).^2,1).^.5));
+y(i) = sum(neuron_data(1,:)./(sum((observation_position(:,i)*ones(1,M)-neuron_data(2:end,:)).^2,1).^.5));
 end

@@ -3,7 +3,12 @@ X = data.x;
 Y = data.y;
 Data = data.raw;
 A = data.ave;
-clear data
+I = [find(X==0),find(Y ==-1)];
+X(I) = [];
+Y(I) = [];
+A(I,:) = [];
+Data(:,I,:) = [];
+clear data I
 %% Average over Stimuluses
 Ave=[]
 for i = 1:11016
@@ -34,16 +39,17 @@ end
 %imshow(squeeze(D(:,:,200)))
 %m = zeros(1,300);
 close
-for i = 31:120
+for i = 31:300
     i
     imagesc(fliplr(flipud(tanh(.10*data(:,:,i)))))
+    %surf(fliplr(flipud(tanh(.10*data(:,:,i)))))
+    
     %  imagesc(fliplr(flipud(min(max((squeeze(data(:,:,i)/5).^3),-50),50))))
     %Del(:,:,i) = del2(squeeze(data(:,:,i)));
     colormap(gray)
     caxis([-1,1])
     %m(i) = mean(mean(squeeze(data(:,:,i))));
     pause;
-    i
 end
 %% Infering the Sources
 close
@@ -51,17 +57,19 @@ for i = 35:200
     %surf(squeeze(Del(:,:,i)))
     %axis([1 110 1 102 -350 350])
     surf(fliplr(flipud(squeeze(data(:,:,i)))))
-    colormap(gray)
+    %imagesc(fliplr(flipud(squeeze(data(:,:,i)))))
+    %colormap(gray)
     %surf(tanh(.15*squeeze(Del(:,:,i))))
-    axis([1 110 1 102 -150 150])
+    %imagesc(tanh(.10*squeeze(data(:,:,i))))
+    %axis([1 110 1 102 -150 150])
     pause;
     i
 end
 %% Real Data (without Filter)
 close
 for i = 32:300
-surf(fliplr(flipud(data(:,:,i))));colormap(gray)
-axis([1 110 1 102 -15 15])
+surf(fliplr(flipud(data(:,:,i))));%colormap(gray)
+axis([1 110 1 102 -105 105])
 pause
 end
 %% Level Sets

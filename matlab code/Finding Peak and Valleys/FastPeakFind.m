@@ -74,15 +74,15 @@ if isfloat(d) %For the case the input image is double, casting to uint16 keeps e
 end
 
 if (nargin < 2)
-    thres = max([min(max(d,[],1))  min(max(d,[],2))]);
+    thres = (max([min(max(d,[],1))  min(max(d,[],2))])) ;
 end
 
 if (nargin < 3)
-    filt = (fspecial('gaussian',5,1)); %if needed modify the filter according to the expected peaks sizes
+    filt = (fspecial('gaussian', 7,1)); %if needed modify the filter according to the expected peaks sizes
 end
 
 if (nargin < 4)
-    edg = 1;
+    edg =3;
 end
 
 if (nargin < 5)
