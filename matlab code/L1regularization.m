@@ -22,45 +22,34 @@ clear Dis
 A_st = (Distance.^2+10^2).^-.5;
 %% L1 data
 opts = spgSetParms('verbosity',0);
-J = find((X-900).^2+(Y-1100).^2<400^2);
-data = squeeze(Data(12,J,60))';
-B = spg_bpdn(A_st(J,J), data, .01, opts);
-%% over the grids
-x1 = 160;
-x2 = 1910;
-y1 = 100;
-y2 = 2100;
-Xb = x1:(x2-x1)/109:x2;
-Yb = y1:(y2-y1)/101:y2;
-%data = zeros(110,102,300);
-L1_image_data = zeros(110,102);
-main_image_data = zeros(110,102);
-for i = 1:110
-    for j = 1:102
-        I = find((X-Xb(i)).^2+(Y-Yb(j)).^2<800);
-        if(size(I,2)<1)
-            I = find((X-Xb(i)).^2+(Y-Yb(j)).^2<900);
-        end
- %       data(i,j,:) = mean(A(I,:));
-        L1_image_data(i,j) = mean(B(find(ismember(I,J)==1),:));
-        main_image_data(i,j) = mean(data(find(ismember(I,J)==1),:));
-    end
-end
-clear x1 x2 y1 y2 Xb Yb i j I
-main_image_data(find(isnan(main_image_data)==1)) = 0;
-L1_image_data(find(isnan(L1_image_data)==1)) = 0;
-%% 2d plot
-close
-    subplot(1,2,1)
-    imagesc(fliplr(flipud(main_image_data)))
-    title('Original Field')
-    subplot(1,2,2)
-    imagesc(fliplr(flipud(L1_image_data(:,:))))
-    title('L1 regularization with error .01')
+J1 = find((X-900).^2+(Y-1100).^2<600^2);
+J2 = find((X-900).^2+(Y-1100).^2<150^2);
+data = squeeze(Data(12,J1,60))';
+B = spg_bpdn(A_st(J1,J2), data, .000001, opts);
 %% 3d plot
-tri = delaunay(X(J),Y(J));
+tri2 = delaunay(X(J2),Y(J2));
 close
     subplot(1,2,1)
-h = trisurf(tri, X(J), Y(J), data);
+trisurf(tri2, X(J2), Y(J2), squeeze(Data(12,J2,60))');
+view([0,0,1])
     subplot(1,2,2)
-h = trisurf(tri, X(J), Y(J), B);
+trisurf(tri2, X(J2), Y(J2), B);
+view([0,0,1])
+%% overtime
+J1 = find((X-900).^2+(Y-1100).^2<600^2);
+J2 = find((X-900).^2+(Y-1100).^2<200^2);
+opts = spgSetParms('verbosity',0);
+for i = 30:100
+B(:,i) = spg_bpdn(A_st(J1,J2), squeeze(Data(12,J1,i))', .001, opts);i
+end
+tri2 = delaunay(X(J2),Y(J2));
+data = Data(12,J2,:);
+for i = 31:100
+subplot(121)
+    trisurf(tri2, X(J2), Y(J2), squeeze(data(1,:,i)));
+    view([0,0,1])
+subplot(122)
+    trisurf(tri2, X(J2), Y(J2), B(:,i));
+    view([0,0,1])
+    pause
+end
