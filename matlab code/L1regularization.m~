@@ -22,8 +22,8 @@ clear Dis
 A_st = (Distance.^2+10^2).^-.5;
 %% L1 data
 opts = spgSetParms('verbosity',0);
-J1 = find((X-900).^2+(Y-1100).^2<600^2);
-J2 = find((X-900).^2+(Y-1100).^2<150^2);
+J1 = find((X-900).^2+(Y-1100).^2<400^2);
+J2 = find((X-900).^2+(Y-1100).^2<400^2);
 data = squeeze(Data(1,J1,60))';
 B = spg_bpdn(100*A_st(J1,J2), data, norm(data)*0.8, opts);
 %% 3d plot
