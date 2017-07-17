@@ -240,7 +240,11 @@ Let $\ell_{0s}$ be the cost to start and end a track at subtrack $s$.  Let $\ell
 \end{align}
 
 \begin{align}
-\ell_{\hat{s}s}=\ell_{\hat{s}}-\theta^-_{\hat{s}}+\theta^0_{\hat{s}}+\theta^-_s-\lambda^3_s+\sum_{d}F_{ds}(\lambda^4_d+\lambda^2_d)+\sum_{d}F^-_{ds}(\lambda^1_d-2\lambda^2_d)+ %\sum_{s_1} \lambda^3_{s_1}Q_{s_1s}
+\ell_{\hat{s}s}=\ell_{\hat{s}}-\theta^-_{\hat{s}}+\theta^0_{\hat{s}}+\theta^-_s-\lambda^3_s+\sum_{d}F^-_{ds}(\lambda^1_d+\lambda^2_d-\lambda^4_d) %\sum_{s_1} \lambda^3_{s_1}Q_{s_1s}
+\end{align}
+
+\begin{align}
+\ell_s=\min [\ell_{0s},\min_{\substack{\hat{s} \\ Q_{\hat{s}s=1}}}\ell_{\hat{s}s}]
 \end{align}
 \bibliographystyle{ieee}
 \bibliography{bib_inst_track}
