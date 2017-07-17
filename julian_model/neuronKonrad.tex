@@ -194,6 +194,15 @@ We assume that the soma is defined by a subtrack $s_0$ which is a special subtra
  \min_{\substack{\gamma \geq 0\\   \sum_p \gamma_p\hat{X}_{dp}\leq 1\\ \sum_p \gamma_p X_{dp}\leq 2 \\ \sum_p \sum_{s}Q_{ss_1}S^+_{s_1p}\gamma_p \leq \sum_p S^0_{sp}\gamma_p }}\sum_p \gamma_p\Theta_p
  \end{align}
  
+ We now take the dual form of this.  We use lagragne multiplers $\lambda^1 \in \mathbb{R}_{0+}^{|\mathcal{D}|}$,$\lambda^2 \in \mathbb{R}_{0+}^{|\mathcal{D}|}$,$\lambda^3 \in \mathbb{R}_{0+}^{|\mathcal{S}|}$ to respreset nteh constraints above in dual form.  
+ 
+ \begin{align}
+ \max_{\substack{\lambda^1 \geq 0\\ \lambda^2 \geq 0 \\ \lambda^3 \geq 0 }}-\sum_d(\lambda^1_d+2\lambda^2_d) \\
+ \Theta_p +\sum_d \hat{X}_{dp}\lambda^1_d+\sum_d X_{dp}\lambda^2_d -\sum_{s}(S^0_{sp})\lambda^3_s+ \sum_{s_1} \lambda^3_{s_1}\sum_{s_2}Q_{s_1s_2}S^+_{s_2p}\geq 0
+ \end{align}
+ 
+ Finding the most violated constraint is a dynamic program.  Many constraints can be generated at once.  
+ 
  
 \bibliographystyle{ieee}
 \bibliography{bib_inst_track}
