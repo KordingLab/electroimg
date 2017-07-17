@@ -1,0 +1,170 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+% \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading nips_2017
+%
+% to avoid loading the natbib package, add option nonatbib:
+\usepackage[nonatbib,final]{arxiv_nips_2016}
+
+%\usepackage{nips_2017}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+% \usepackage[final]{nips_2017}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage[colorlinks,citecolor=blue,linkcolor=blue]{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{verbatim}
+\usepackage[svgnames]{xcolor}
+\usepackage{amsmath,amssymb}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,arrows.meta}
+\tikzset{%
+  >={Latex[width=2mm,length=2mm]},
+  % Specifications for style of nodes:
+            base/.style = {rectangle, rounded corners, draw=black,
+                           minimum width=1.5cm, minimum height=1cm,
+                           text centered, font=\sffamily},
+  activityStarts/.style = {base, fill=blue!30},
+    InExtractPortion/.style = {base, fill=blue!30},
+       InfoAggregator/.style = {base, fill=red!30},
+    ColGen/.style = {base, fill=green!10},
+    Storage/.style = {base, fill=brown!30},
+    LPSolve/.style = {base, fill=violet!30},
+    ILPSolve/.style = {base, fill=red!30},
+    Output/.style = {base, fill=gray!30},
+       startstop/.style = {base, fill=red!30},
+    activityRuns/.style = {base, fill=green!30},
+         process/.style = {base, minimum width=2.5cm, fill=orange!15,
+                           font=\ttfamily},
+}
+
+\definecolor{Gray}{gray}{0.9}
+
+\pgfdeclarelayer{edgelayer}
+\pgfdeclarelayer{nodelayer}
+\pgfsetlayers{edgelayer,nodelayer,main}
+
+\tikzstyle{vertex_default}=[circle,fill=White,draw=Black,text width=0.1cm]
+\tikzstyle{tree_edge}=[thick,draw=Green]
+\tikzstyle{add_edge}=[thick,draw=Red]
+\tikzstyle{local_edge}=[thick,draw=Cyan]
+
+\newcommand\ie{\emph{i.e.}}
+\newcommand\eg{\emph{e.g.}}
+\newcommand\Eg{\emph{E.e.}}
+\newcommand\todo[1]{\textcolor{red}{\textbf{#1}}}
+
+
+\title{Neuron Konrad}
+
+% The \author macro works with any number of authors. There are two
+% commands used to separate the names and addresses of multiple
+% authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to
+% break the lines. Using \AND forces a line break at that point. So,
+% if LaTeX puts 3 of 4 authors names on the first line, and the last
+% on the second line, try using \AND instead of \And before the third
+% author name.
+
+\title{Constructing a Neuron using Column Generation}
+\author{
+Julian Yarkony\\
+Experian Data Lab \\% and Salk Institute$.^0$ \footnotemark[0]\\
+San Diego CA \\
+\texttt{julian.e.yarkony@gmail.com} 
+%(She has NOT yet approved this ICML submission version for distribution with her name on it.  )\\
+%DO NOT DISTRIBUTE
+}
+
+\begin{document}
+% \nipsfinalcopy is no longer used
+%
+\maketitle
+%
+\begin{abstract}
+We consider the problem of describing neurons in single neuron images.  To do this we map the problem to a problem of constructing a lineage to one %Results for published benchmark sequences demonstrate the superiority of this approach.
+%
+%We consider the problem of multicut tracking and attack if with various sophisticated optimization algorithms appleid to trucated models with the goal of admitting effienct inference.  
+%We apply Benders decomposition in conjunction with column generation in order to tackle the problem of multi-object tracking and instance segmentation concurrently. In this case a track of an object corresponds to a subset of the detections present across time.  We employ the multi-cut formulation of tracking+instance segmentation.  In our case columns correspond to subsets of the detections at a given time.    This lies in contrast to the clear use of column generation where a column describes a complete track including all of its detections across time.  Benders decomposition is used to include inter-termporal interactions.  Our formulation is applied to the multi-cut formulation and can be shown to correspond to a tighter LP relaxation.
+%
+\end{abstract}
+%
+\section{Formulation}
+\subsection{Tracks }
+
+\begin{itemize}
+\item
+We describe the set of detections as $\mathcal{D}$ which we index with $d$.  
+\item 
+We describe the set of tracks as $\mathcal{P}$ which we index with $p$.  
+\item 
+We use $X \in \{0,1\}^{|\mathcal{D}\times \mathcal{P}|}$ to denote a mapping of detections to tracks where $X_{dp}=1$ indicates that track $d$ is associated with track $p$.  
+\item 
+A track consists of as sequence of sub-tracks each of $k$ detections where $k$ is a user defined hyper-parameter that trades off model complexity and efficiency of inference. 
+\item 
+ We use $\bar{X} \in \{0,1\}^{|\mathcal{D}\times \mathcal{P}|}$ to denote a mapping of detections to tracks where $X_{dp}=1$ indicates that track $d$ is associated with track $p$ and detection $d$ is not in the first $k-1$ detections  on the track.  .  
+\item 
+We define the set of subtracks as $\mathcal{S}$ which we index with $s$.  A given subtrack has elements $\{s_1,s_2,s_3...s_k\}$ ordered in time from earliest to latest.  
+
+\item 
+We define a mapping of tracks to subtracks using a matrix $S^0 \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$.  We use $S^0_{sp}=1$ to indicate that track $p$ contains subtrack $s$.  
+
+\item 
+In order to describe the first subtrack on a  track we use matrix $S^+ \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$ which we index with $s,p$ where $S^+_{sp}=1$ if and only if subtrack $s$ is the first subtrack on track $p$
+\item 
+In order to describe the first subtrack on a  track we use matrix $S^- \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$ which we index with  $s,p$ where $S^+_{sp}=1$ if and only if subtrack $s$ is the first subtrack on track $p$
+
+\item 
+The subtracks in the sequence that describes a track overlap eachother.  Hence if a sub-tracks $s_1$ is succeeded by another subtrack $s_2$ on a given track then the final $k-1$ elements on $s_1$ are the same as the earliest $k-1$ elements in $s_2$
+\item
+We use $Q \in \{ 0,1\}^{|\mathcal{S}| \times |\mathcal{S}|}$ which we index by $s_1,s_2$ respectively.   We set $Q_{s_1s_2}=1$ if and only if subtrack $s_1$ can succeed $s_2$.  
+\end{itemize}
+\subsection{Costs }
+We associate tracks with costs with costs usign the folowing noattion.  We use $\Theta \in \mathbb{R}^{\mathcal{P}}$ which we index by $p$ to associate  tracks  with costs.  We use $\Theta_p$ to associate track $p$ with a cost.  
+\begin{itemize}
+\item We use $\theta \in \mathbb{R}^{|\mathcal{S}|,3}$ which we index by $s/ [+,-,0]$ respectively.  
+\item 
+We use $\theta_{s+}$ to denote the cost of starting a track at subtrack $s$.  
+\item 
+We use $\theta_{s-}$ to denote the cost of terminating a track at subtrack $s$. 
+\item 
+We use $\theta_{s0}$ to denote the cost of including  a subtrack $s$ in a track  . 
+ \end{itemize}
+ 
+ We assocaite a track with cost with cost $\Theta_p$ as follows.  
+ \begin{align}
+ \Theta_p=\sum_{s \in \mathcal{S}}S^+_{sp}\theta_{s+}+S^-_{sp}\theta_{s-}+S^0_{sp}\theta_{s0}
+ \end{align}
+ 
+ \subsection{Collection of Tracks}
+ 
+ We describe a collection of tracks that describe a neuron using a vector $\gamma \in \{ 0,1\}^{|\mathcal{P}|}$ which we index with $p$.  We set $\gamma_p=1$ if and only if track $p$ is incuded in the neuron.  
+ 
+ We use $\Gamma$ to describe the set of all possible neurons.  This a subset of $\gamma \in \{ 0,1\}^{|\mathcal{P}|}$ The cost associated with a nueron described by $\gamma$ is defined by the sum of the tracks that compose it.  The selection of the lowest cost neuron is thuse written below   
+ 
+ \begin{align}
+ \min_{\gamma \in \Gamma}\sum_p \gamma_p\Theta_p
+ \end{align}
+ 
+ \subsection{Feasibility}
+
+We now define what makes a neuron feasbible.   A neuron consists of a sequence of tracks.  
+ 
+%We describe the set of subtracks as 
+
+\bibliographystyle{ieee}
+\bibliography{bib_inst_track}
+
+\end{document}
