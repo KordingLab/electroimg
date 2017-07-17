@@ -114,13 +114,18 @@ We use $X \in \{0,1\}^{|\mathcal{D}\times \mathcal{P}|}$ to denote a mapping of 
 \item 
 A track consists of as sequence of sub-tracks each of $k$ detections where $k$ is a user defined hyper-parameter that trades off model complexity and efficiency of inference. 
 \item 
- We use $\bar{X} \in \{0,1\}^{|\mathcal{D}\times \mathcal{P}|}$ to denote a mapping of detections to tracks where $X_{dp}=1$ indicates that track $d$ is associated with track $p$ and detection $d$ is not in the first $k-1$ detections  on the track.  .  
+ We use $\bar{X} \in \{0,1\}^{|\mathcal{D}\times \mathcal{P}|}$ to denote a mapping of detections to tracks where $X_{dp}=1$ indicates that track $d$ is associated with track $p$ and detection $d$ is not in the first $k-1$ detections  on the track.  .
+ \end{itemize}
+ \subsection{Sub-Tracks }
+   \begin{itemize}
 \item 
 We define the set of subtracks as $\mathcal{S}$ which we index with $s$.  A given subtrack has elements $\{s_1,s_2,s_3...s_k\}$ ordered in time from earliest to latest.  
-
+\item
+We use $F \in \{ 0,1\}^{|\mathcal{D}| \times |\mathcal{S}|}$ which we index by $d,s$ respectively.   We set $F_{ds}=1$ if and only if detection $d$ is in subtrack $s $.  
+\item
+We use $F^- \in \{ 0,1\}^{|\mathcal{D}| \times |\mathcal{S}|}$ which we index by $d,s$ respectively.   We set $F_{ds}=1$ if and only if detection $d$ is the final detection on subtrack $s$.  
 \item 
 We define a mapping of tracks to subtracks using a matrix $S^0 \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$.  We use $S^0_{sp}=1$ to indicate that track $p$ contains subtrack $s$.  
-
 \item 
 In order to describe the first subtrack on a  track we use matrix $S^+ \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$ which we index with $s,p$ where $S^+_{sp}=1$ if and only if subtrack $s$ is the first subtrack on track $p$
 \item 
@@ -162,6 +167,7 @@ We use $\theta_{s0}$ to denote the cost of including  a subtrack $s$ in a track 
 
 We now define what makes a neuron feasbible.   A neuron consists of a sequence of tracks.  
  
+ $\sum_s$
 %We describe the set of subtracks as 
 
 \bibliographystyle{ieee}
