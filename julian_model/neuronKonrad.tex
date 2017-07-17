@@ -204,6 +204,44 @@ We assume that the soma is defined by a subtrack $s_0$ which is a special subtra
  Finding the most violated constraint is a dynamic program.  Many constraints can be generated at once.  
  
  
+ \section{augmenting}
+ 
+ To make things easier I susepct adding the following will help.  We will make its multiplier slightly less
+ 
+ \begin{align}
+ \sum_{p}\gamma_p(X_{dp}-\hat{X}_{dp})\leq  \sum_{p}\gamma_p \hat{X}_{dp} \forall d \notin s_0
+ \end{align}
+ This is a weaker constarint that that imposed by  $\lambda^3$ but can be expressed in addition.   It has thebenifit that it operates on a small number of variables $\mathcal{D}$ not $\mathcal{S}$.  We express it with multipliers  $\lambda^4 \in \mathbb{R}^{|\mathcal{D}}$
+ 
+ 
+ \begin{align}
+ \max_{\substack{\lambda^1 \geq 0\\ \lambda^2 \geq 0 \\ \lambda^3 \geq 0 }}-\sum_d(\lambda^1_d+2\lambda^2_d) \\
+ \Theta_p +\sum_d \hat{X}_{dp}\lambda^1_d+\sum_d X_{dp}\lambda^2_d -\sum_{s}(S^0_{sp})\lambda^3_s+ \sum_{s_1} \lambda^3_{s_1}\sum_{s_2}Q_{s_1s_2}S^+_{s_2p}+\sum_{d \notin s_0} \lambda^4_d(X_{dp}-2\hat{X}_{dp})\geq 0
+ \end{align}
+ \section{Dyanmic form}
+Finidng the most violated constraint is a dynamic program.
+\begin{align}
+ \min_p \Theta_p +\sum_d \hat{X}_{dp}\lambda^1_d+\sum_d X_{dp}\lambda^2_d -\sum_{s}(S^0_{sp})\lambda^3_s+ \sum_{s_1} \lambda^3_{s_1}\sum_{s_2}Q_{s_1s_2}S^+_{s_2p}+\sum_{d \notin s_0} \lambda^4_d(X_{dp}-2\hat{X}_{dp})
+ \end{align}
+ 
+ We now plug in for $\Theta_p$
+ 
+ \begin{align}
+ \min_p \sum_{s \in \mathcal{S}}S^+_{sp}\theta_{s+}+S^-_{sp}\theta_{s-}+S^0_{sp}\theta_{s0} \\
+ \nonumber +\sum_d \hat{X}_{dp}\lambda^1_d+\sum_d X_{dp}\lambda^2_d -\sum_{s}(S^0_{sp})\lambda^3_s+ \sum_{s_1} \lambda^3_{s_1}\sum_{s_2}Q_{s_1s_2}S^+_{s_2p}+\sum_{d \notin s_0} \lambda^4_d(X_{dp}-2\hat{X}_{dp})
+ \end{align}
+
+The lowest cost track terminating at $s_2$ can be written as follows.  
+
+Let $\ell_{0s}$ be the cost to start and end a track at subtrack $s$.  Let $\ell_{s_1s_2}$ be of the lowest cost track ending ins $s_2$ wiht $s_1$ as its penultimate subtrack.  
+
+\begin{align}
+\ell_{0s}=\theta^-_s+\theta^+_s-\lambda^3_s+\sum_{d}F_{ds}(\lambda^4_d+\lambda^2_d)+\sum_{d}F^-_{ds}(\lambda^1_d-2\lambda^2_d)+ \sum_{s_1} \lambda^3_{s_1}Q_{s_1s}
+\end{align}
+
+\begin{align}
+\ell_{\hat{s}s}=\ell_{\hat{s}}-\theta^-_{\hat{s}}+\theta^0_{\hat{s}}+\theta^-_s-\lambda^3_s+\sum_{d}F_{ds}(\lambda^4_d+\lambda^2_d)+\sum_{d}F^-_{ds}(\lambda^1_d-2\lambda^2_d)+ %\sum_{s_1} \lambda^3_{s_1}Q_{s_1s}
+\end{align}
 \bibliographystyle{ieee}
 \bibliography{bib_inst_track}
 
