@@ -125,7 +125,7 @@ We use $F \in \{ 0,1\}^{|\mathcal{D}| \times |\mathcal{S}|}$ which we index by $
 \item
 We use $F^- \in \{ 0,1\}^{|\mathcal{D}| \times |\mathcal{S}|}$ which we index by $d,s$ respectively.   We set $F_{ds}=1$ if and only if detection $d$ is the final detection on subtrack $s$.  
 \item 
-We define a mapping of tracks to subtracks using a matrix $S^0 \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$.  We use $S^0_{sp}=1$ to indicate that track $p$ contains subtrack $s$.  
+We define a mapping of tracks to subtracks using a matrix $S^0 \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$.  We use $S^0_{sp}=1$ to indicate that track $p$ contains subtrack $s$ as neither the start nor the end.  
 \item 
 In order to describe the first subtrack on a  track we use matrix $S^+ \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$ which we index with $s,p$ where $S^+_{sp}=1$ if and only if subtrack $s$ is the first subtrack on track $p$
 \item 
@@ -145,7 +145,7 @@ We use $\theta_{s+}$ to denote the cost of starting a track at subtrack $s$.
 \item 
 We use $\theta_{s-}$ to denote the cost of terminating a track at subtrack $s$. 
 \item 
-We use $\theta_{s0}$ to denote the cost of including  a subtrack $s$ in a track  . 
+We use $\theta_{s0}$ to denote the cost of including  a subtrack $s$ in a track as neither the start nor the end  . 
  \end{itemize}
  
  We assocaite a track with cost with cost $\Theta_p$ as follows.  
@@ -165,11 +165,25 @@ We use $\theta_{s0}$ to denote the cost of including  a subtrack $s$ in a track 
  
  \subsection{Feasibility}
 
-We now define what makes a neuron feasbible.   A neuron consists of a sequence of tracks.  
+We assume that the soma is defined by a subtrack $s_0$ which is a special subtrack that initializes the neuron.  
  
- $\sum_s$
-%We describe the set of subtracks as 
-
+ A track is included or not included :  $\gamma_p \in \{0,1\}$
+ 
+ No two tracks can continue through a given detection
+ \begin{align}
+ \sum_p \gamma_p\hat{X}_{dp}\leq 1 \quad \forall d
+ \end{align}
+ 
+ A detetion can not be part of more than two tracks.  This blocks succession in close proximity.  
+  \begin{align}
+ \sum_p \gamma_p X_{dp}\leq 2 \quad \forall d
+ \end{align}
+%
+ A track can not split off a subtrack unless that sub-track is already on a track
+ \begin{align}
+ \sum_p S^+_{sp}\gamma_p \leq \sum_p S^0_{sp}\gamma_p \quad \forall s \neq s_0
+ \end{align}
+ 
 \bibliographystyle{ieee}
 \bibliography{bib_inst_track}
 
