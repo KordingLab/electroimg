@@ -179,10 +179,21 @@ We assume that the soma is defined by a subtrack $s_0$ which is a special subtra
  \sum_p \gamma_p X_{dp}\leq 2 \quad \forall d
  \end{align}
 %
- A track can not split off a subtrack unless that sub-track is already on a track
+ A track can not split off a subtrack unless that sub-track is already on a track. 
  \begin{align}
- \sum_p S^+_{sp}\gamma_p \leq \sum_p S^0_{sp}\gamma_p \quad \forall s \neq s_0
+ \sum_p \sum_{s}Q_{ss_1}S^+_{s_1p}\gamma_p \leq \sum_p S^0_{sp}\gamma_p %\quad \forall s \neq s_0
  \end{align}
+ If a track terminates at a given detection then no detections can start off it.  A strong penalty for ending a track early negates the need for this.  Since this strong penalty has been described  I ignore this constraint in the document.  
+ \begin{align}
+\sum_p\gamma_p\sum_s(F_{ds}-F^-_{ds}) \leq (1-\sum_p\gamma_p\sum_s S^-_pF^-_{ds})
+ \end{align}
+ 
+ \section{LP relaxation}
+ 
+  \begin{align}
+ \min_{\substack{\gamma \geq 0\\   \sum_p \gamma_p\hat{X}_{dp}\leq 1\\ \sum_p \gamma_p X_{dp}\leq 2 \\ \sum_p \sum_{s}Q_{ss_1}S^+_{s_1p}\gamma_p \leq \sum_p S^0_{sp}\gamma_p }}\sum_p \gamma_p\Theta_p
+ \end{align}
+ 
  
 \bibliographystyle{ieee}
 \bibliography{bib_inst_track}
