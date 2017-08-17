@@ -100,7 +100,13 @@ We consider the problem of describing neurons in single neuron images.  To do th
 %We apply Benders decomposition in conjunction with column generation in order to tackle the problem of multi-object tracking and instance segmentation concurrently. In this case a track of an object corresponds to a subset of the detections present across time.  We employ the multi-cut formulation of tracking+instance segmentation.  In our case columns correspond to subsets of the detections at a given time.    This lies in contrast to the clear use of column generation where a column describes a complete track including all of its detections across time.  Benders decomposition is used to include inter-termporal interactions.  Our formulation is applied to the multi-cut formulation and can be shown to correspond to a tighter LP relaxation.
 %
 \end{abstract}
-%
+
+\section{Simulation}
+To validate the method that we present here, we generate synthetic data where we know the ground truth and ask the model described above to reconstruct the morphology of neuron. The synthetic data represent by a $n\times 3$ matrix where $n$ is the number of all detection in the whole recording and the columns are x coordinate, y coordinate and time of each detection. Hence the set $\mathcal{D}$  has $n$ elements. Also we can fit $k=5$ since usually the segments of neuron (the section between two branching point) have the length longer than $5$ detection. Finally to apply the model we need to know the cost function. The neuron can be detected by solving a minimization problem which is written in \ref{cost_neuron}. In this setup, a neuron is a combination of tracks (i.e. segments), indexed by $p$, and to find the cost of detection of one neuron, the cost of each of its tracks should be calculated separately and then summation over all tracks the cost of the neuron can be calculated. The constrains of ILP are coming from the fact that the combination of these segments are a tree like object. For example, at most two track have a common starting point. In sum, by knowing the cost of each track, we can calculate the cost of neuron. Therefore we need to know the cost of one track in formula \ref{cost_track} For the first simulation, I have dropped the amplitude of each detection and hence we can ignore the notation for starting and terminating by a sub-track. Indeed this can be justify by saying that a track, a set of sub-tracks, are modeled here by having different behavior at its end points compared to its intermediate points and the source of this different behavior is coming from amplitude (not the location) of detection. Hence instead of having $\theta_{s+}, \theta_{s-}, \theta_{s0}$ we use one notation $\theta_{s}$ where s is the sub-track.
+Finally to define the cost of sub-track, we can define:
+\begin{equation}
+\theta (s) = \theta ( \{ s_1, \cdots s_k\} ) = \sum_{i=1}^{k-1} ||\text{location}(s_k) - \text{location}(s_{k+1}) ||_2
+\end{equation}
 \section{Formulation}
 \subsection{Tracks }
 
@@ -110,62 +116,64 @@ We describe the set of detections as $\mathcal{D}$ which we index with $d$.
 \item 
 We describe the set of tracks as $\mathcal{P}$ which we index with $p$.  
 \item 
-We use $X \in \{0,1\}^{|\mathcal{D}\times \mathcal{P}|}$ to denote a mapping of detections to tracks where $X_{dp}=1$ indicates that track $d$ is associated with track $p$.  
+We use $X \in \{0,1\}^{|\mathcal{D}\times \mathcal{P}|}$ to denote a mapping of detections to tracks where $X_{dp}=1$ indicates that detection $d$ is associated with track $p$.  
 \item 
 A track consists of as sequence of sub-tracks each of $k$ detections where $k$ is a user defined hyper-parameter that trades off model complexity and efficiency of inference. 
 \item 
- We use $\bar{X} \in \{0,1\}^{|\mathcal{D}\times \mathcal{P}|}$ to denote a mapping of detections to tracks where $X_{dp}=1$ indicates that track $d$ is associated with track $p$ and detection $d$ is not in the first $k-1$ detections  on the track.  .
- \end{itemize}
- \subsection{Sub-Tracks }
+ We use $\bar{X} \in \{0,1\}^{|\mathcal{D}\times \mathcal{P}|}$ to denote a mapping of detections to tracks where $\bar{X}_{dp}=1$ indicates that detection $d$ is associated with track $p$ and detection $d$ is not in the first $k-1$ detections  on the track.
+
+\end{itemize}
+
+\subsection{Sub-Tracks }
    \begin{itemize}
 \item 
-We define the set of subtracks as $\mathcal{S}$ which we index with $s$.  A given subtrack has elements $\{s_1,s_2,s_3...s_k\}$ ordered in time from earliest to latest.  
+We define the set of sub-tracks as $\mathcal{S}$ which we index with $s$.  A given sub-track has elements $\{s_1,s_2,s_3...s_k\}$ ordered in time from earliest to latest.  
 \item
-We use $F \in \{ 0,1\}^{|\mathcal{D}| \times |\mathcal{S}|}$ which we index by $d,s$ respectively.   We set $F_{ds}=1$ if and only if detection $d$ is in subtrack $s $.  
+We use $F \in \{ 0,1\}^{|\mathcal{D}| \times |\mathcal{S}|}$ which we index by $d,s$ respectively.   We set $F_{ds}=1$ if and only if detection $d$ is in sub-track $s $.  
 \item
-We use $F^- \in \{ 0,1\}^{|\mathcal{D}| \times |\mathcal{S}|}$ which we index by $d,s$ respectively.   We set $F_{ds}=1$ if and only if detection $d$ is the final detection on subtrack $s$.  
+We use $F^- \in \{ 0,1\}^{|\mathcal{D}| \times |\mathcal{S}|}$ which we index by $d,s$ respectively.   We set $F_{ds}=1$ if and only if detection $d$ is the final detection on sub-track $s$.  
 \item 
-We define a mapping of tracks to subtracks using a matrix $S^0 \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$.  We use $S^0_{sp}=1$ to indicate that track $p$ contains subtrack $s$ as neither the start nor the end.  
+We define a mapping of tracks to sub-tracks using a matrix $S^0 \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$.  We use $S^0_{sp}=1$ to indicate that track $p$ contains sub-track $s$ as neither the start nor the end.  
 \item 
-In order to describe the first subtrack on a  track we use matrix $S^+ \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$ which we index with $s,p$ where $S^+_{sp}=1$ if and only if subtrack $s$ is the first subtrack on track $p$
+In order to describe the first sub-track on a  track we use matrix $S^+ \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$ which we index with $s,p$ where $S^+_{sp}=1$ if and only if sub-track $s$ is the first sub-track on track $p$
 \item 
-In order to describe the first subtrack on a  track we use matrix $S^- \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$ which we index with  $s,p$ where $S^+_{sp}=1$ if and only if subtrack $s$ is the first subtrack on track $p$
+In order to describe the first sub-track on a  track we use matrix $S^- \in \{0,1 \}^{|\mathcal{S}|\times |\mathcal{P}|}$ which we index with  $s,p$ where $S^+_{sp}=1$ if and only if sub-track $s$ is the first sub-track on track $p$
 
 \item 
-The subtracks in the sequence that describes a track overlap eachother.  Hence if a sub-tracks $s_1$ is succeeded by another subtrack $s_2$ on a given track then the final $k-1$ elements on $s_1$ are the same as the earliest $k-1$ elements in $s_2$
+The sub-tracks in the sequence that describes a track overlap each other.  Hence if a sub-tracks $s_1$ is succeeded by another sub-track $s_2$ on a given track then the final $k-1$ elements on $s_1$ are the same as the earliest $k-1$ elements in $s_2$
 \item
-We use $Q \in \{ 0,1\}^{|\mathcal{S}| \times |\mathcal{S}|}$ which we index by $s_1,s_2$ respectively.   We set $Q_{s_1s_2}=1$ if and only if subtrack $s_1$ can succeed $s_2$.  
+We use $Q \in \{ 0,1\}^{|\mathcal{S}| \times |\mathcal{S}|}$ which we index by $s_1,s_2$ respectively.   We set $Q_{s_1s_2}=1$ if and only if sub-track $s_1$ can succeed $s_2$.  
 \end{itemize}
 \subsection{Costs }
-We associate tracks with costs with costs usign the folowing noattion.  We use $\Theta \in \mathbb{R}^{\mathcal{P}}$ which we index by $p$ to associate  tracks  with costs.  We use $\Theta_p$ to associate track $p$ with a cost.  
+We associate tracks with costs with costs using the following notation.  We use $\Theta \in \mathbb{R}^{\mathcal{P}}$ which we index by $p$ to associate  tracks  with costs.  We use $\Theta_p$ to associate track $p$ with a cost.  
 \begin{itemize}
 \item We use $\theta \in \mathbb{R}^{|\mathcal{S}|,3}$ which we index by $s/ [+,-,0]$ respectively.  
 \item 
-We use $\theta_{s+}$ to denote the cost of starting a track at subtrack $s$.  
+We use $\theta_{s+}$ to denote the cost of starting a track at sub-track $s$.  
 \item 
-We use $\theta_{s-}$ to denote the cost of terminating a track at subtrack $s$. 
+We use $\theta_{s-}$ to denote the cost of terminating a track at sub-track $s$. 
 \item 
-We use $\theta_{s0}$ to denote the cost of including  a subtrack $s$ in a track as neither the start nor the end  . 
+We use $\theta_{s0}$ to denote the cost of including  a sub-track $s$ in a track as neither the start nor the end  . 
  \end{itemize}
  
- We assocaite a track with cost with cost $\Theta_p$ as follows.  
- \begin{align}
+ We associate a track with cost with cost $\Theta_p$ as follows:
+ \begin{align}\label{cost_track}
  \Theta_p=\sum_{s \in \mathcal{S}}S^+_{sp}\theta_{s+}+S^-_{sp}\theta_{s-}+S^0_{sp}\theta_{s0}
  \end{align}
  
  \subsection{Collection of Tracks}
  
- We describe a collection of tracks that describe a neuron using a vector $\gamma \in \{ 0,1\}^{|\mathcal{P}|}$ which we index with $p$.  We set $\gamma_p=1$ if and only if track $p$ is incuded in the neuron.  
+ We describe a collection of tracks that describe a neuron using a vector $\gamma \in \{ 0,1\}^{|\mathcal{P}|}$ which we index with $p$.  We set $\gamma_p=1$ if and only if track $p$ is included in the neuron.  
  
- We use $\Gamma$ to describe the set of all possible neurons.  This a subset of $\gamma \in \{ 0,1\}^{|\mathcal{P}|}$ The cost associated with a nueron described by $\gamma$ is defined by the sum of the tracks that compose it.  The selection of the lowest cost neuron is thuse written below   
+ We use $\Gamma$ to describe the set of all possible neurons.  This a subset of $\gamma \in \{ 0,1\}^{|\mathcal{P}|}$ The cost associated with a neuron described by $\gamma$ is defined by the sum of the tracks that compose it.  The selection of the lowest cost neuron is thus written below   
  
- \begin{align}
+ \begin{align}\label{cost_neuron}
  \min_{\gamma \in \Gamma}\sum_p \gamma_p\Theta_p
  \end{align}
  
  \subsection{Feasibility}
 
-We assume that the soma is defined by a subtrack $s_0$ which is a special subtrack that initializes the neuron.  
+We assume that the soma is defined by a sub-track $s_0$ which is a special sub-track that initializes the neuron.  
  
  A track is included or not included :  $\gamma_p \in \{0,1\}$
  
@@ -179,7 +187,7 @@ We assume that the soma is defined by a subtrack $s_0$ which is a special subtra
  \sum_p \gamma_p X_{dp}\leq 2 \quad \forall d
  \end{align}
 %
- A track can not split off a subtrack unless that sub-track is already on a track. 
+ A track can not split off a sub-track unless that sub-track is already on a track. 
  \begin{align}
  \sum_p \sum_{s}Q_{ss_1}S^+_{s_1p}\gamma_p \leq \sum_p S^0_{sp}\gamma_p %\quad \forall s \neq s_0
  \end{align}
@@ -194,7 +202,7 @@ We assume that the soma is defined by a subtrack $s_0$ which is a special subtra
  \min_{\substack{\gamma \geq 0\\   \sum_p \gamma_p\hat{X}_{dp}\leq 1\\ \sum_p \gamma_p X_{dp}\leq 2 \\ \sum_p \sum_{s}Q_{ss_1}S^+_{s_1p}\gamma_p \leq \sum_p S^0_{sp}\gamma_p }}\sum_p \gamma_p\Theta_p
  \end{align}
  
- We now take the dual form of this.  We use lagragne multiplers $\lambda^1 \in \mathbb{R}_{0+}^{|\mathcal{D}|}$,$\lambda^2 \in \mathbb{R}_{0+}^{|\mathcal{D}|}$,$\lambda^3 \in \mathbb{R}_{0+}^{|\mathcal{S}|}$ to respreset nteh constraints above in dual form.  
+ We now take the dual form of this.  We use Lagrange multipliers $\lambda^1 \in \mathbb{R}_{0+}^{|\mathcal{D}|}$,$\lambda^2 \in \mathbb{R}_{0+}^{|\mathcal{D}|}$,$\lambda^3 \in \mathbb{R}_{0+}^{|\mathcal{S}|}$ to respreset nteh constraints above in dual form.  
  
  \begin{align}
  \max_{\substack{\lambda^1 \geq 0\\ \lambda^2 \geq 0 \\ \lambda^3 \geq 0 }}-\sum_d(\lambda^1_d+2\lambda^2_d) \\
@@ -233,7 +241,7 @@ Finidng the most violated constraint is a dynamic program.
 
 The lowest cost track terminating at $s_2$ can be written as follows.  
 
-Let $\ell_{0s}$ be the cost to start and end a track at subtrack $s$.  Let $\ell_{s_1s_2}$ be of the lowest cost track ending ins $s_2$ wiht $s_1$ as its penultimate subtrack.  
+Let $\ell_{0s}$ be the cost to start and end a track at sub-track $s$.  Let $\ell_{s_1s_2}$ be of the lowest cost track ending ins $s_2$ wiht $s_1$ as its penultimate sub-track.  
 
 \begin{align}
 \ell_{0s}=\theta^-_s+\theta^+_s-\lambda^3_s+\sum_{d}F_{ds}(\lambda^4_d+\lambda^2_d)+\sum_{d}F^-_{ds}(\lambda^1_d-2\lambda^2_d)+ \sum_{s_1} \lambda^3_{s_1}Q_{s_1s}
