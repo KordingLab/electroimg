@@ -254,6 +254,39 @@ Let $\ell_{0s}$ be the cost to start and end a track at sub-track $s$.  Let $\el
 \begin{align}
 \ell_s=\min [\ell_{0s},\min_{\substack{\hat{s} \\ Q_{\hat{s}s=1}}}\ell_{\hat{s}s}]
 \end{align}
+
+\section{Update feasiblity}
+
+One track non-start at most for each detection
+\begin{align}
+\sum_{p} X_{dp}\gamma_p \leq 1
+\end{align}
+
+$K^+$ is the dock start.  $K^-$ is the end dock
+\begin{align}
+\sum_{p}(-K^-_{kp}+\frac{1}{2}K+_p)\gamma_p \leq 0
+\end{align}
+
+dock cost must be paid beyond 1
+\begin{align}
+\sum_{p}K^-_{kp}\gamma_p+\delta_p \leq 1
+\end{align}
+
+$\Delta$ is the dock cost
+\begin{align}
+\min_{\substack{\gamma \geq 0 \\ \delta \geq 0}}\Gamma^{\top}\gamma + \Delta^{\top}\delta\\
+\nonumber \mbox{s.t.   } X\gamma \leq 1\\
+\nonumber (-K^-+\frac{1}{2}K^+)\gamma \leq 0\\
+\nonumber K^{+}\gamma-\delta \leq 1
+\end{align}
+
+Dual form
+\begin{align}
+\max_{\lambda \geq 0}-1^{\top }\lambda^1-1^{\top}\lambda^{3}\\
+\nonumber \Gamma+X^{\top}\lambda^1-K^{-\top}\lambda^2+\frac{1}{2}K^{+\top}\lambda^2 +K^{+\top}\lambda^3\geq 0\\
+\nonumber \Delta -\lambda^3 \geq 0
+\end{align}
+
 \bibliographystyle{ieee}
 \bibliography{bib_inst_track}
 
