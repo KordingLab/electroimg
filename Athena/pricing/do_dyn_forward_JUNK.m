@@ -1,4 +1,4 @@
-function T1=do_dyn_forward(G,dual_sol,T);
+function T1=do_dyn_forward(G,dual_sol,T)
 
 F=[];
 F.red_cost=zeros(G.Ns,1);
