@@ -287,6 +287,30 @@ Dual form
 \nonumber \Delta -\lambda^3 \geq 0
 \end{align}
 
+
+\section {Double Update}
+
+One track non-start at most for each detection
+\begin{align}
+\sum_{p} X_{dp}\gamma_p \leq 1
+\end{align}
+
+$K^+$ is the dock start.  $K^-$ is the end dock
+\begin{align}
+\sum_{p}(-K^-_{kp}+\frac{1}{2}K+_p)\gamma_p \leq 0
+\end{align}
+
+\begin{align}
+\min_{\substack{\gamma \geq 0 }}\Gamma^{\top}\gamma \\
+\nonumber \mbox{s.t.   } X\gamma \leq 1\\
+\nonumber (\frac{1}{2}K^+  -K^-)\gamma \leq 0\\
+\end{align}
+
+\begin{align}
+\max_{\substack{\lambda^1 \geq 0 \\ \lambda^2 \geq 0}}1^{\top }\lambda^1\\
+\nonumber \Gamma+X^\top \lambda^1+(\frac{1}{2}K^+ -K^-)^{\top}\lambda^2 \geq 0
+\end{align}
+
 \bibliographystyle{ieee}
 \bibliography{bib_inst_track}
 

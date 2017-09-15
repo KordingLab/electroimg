@@ -7,6 +7,5 @@ n_tracks=size(T.X,2);
 
 primal_sol=[];
 primal_sol.prim_info=prim_info;
-primal_sol.cols_used=prim_info([1:n_tracks]);
-primal_sol.docks=prim_info([1+n_tracks:end]);
+
 

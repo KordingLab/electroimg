@@ -2,7 +2,6 @@ function [C,A,B]=form_LP(G,T)
 
 %T.non_start*\gamma <=1
 A1=T.non_start_det;
-A1=[A1a,A1b];
 B1=ones(G.N,1);
 
 
