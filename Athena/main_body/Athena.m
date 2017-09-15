@@ -6,14 +6,16 @@ H.lp=[];
 H.timer=[];
 
 T=[];
+
 T.X=[];
+T.non_start_det=[];
 T.Theta=[];
-T.sub_incl=[];
-T.sub_in=[];
-T.sub_out=[];
+T.sub=[];
+T.dock_in=[];
+T.dock_out=[];
 
 for(step=1:G.opt.num_steps)
-    [dual_sol,~,lp_val]=solve_lp_master(G,T);
+    [dual_sol,~,lp_val]=solve_lp_master(T);
     [T,tot_resid]=get_new_cols(G,dual_sol,T);
 %
     H.lp=[H.lp;lp_val];
@@ -25,7 +27,7 @@ for(step=1:G.opt.num_steps)
     
 end
 
-[primal_int_sol,ub]=solve_ilp_master(G,T);
+[primal_int_sol,ub]=solve_ilp_master(T);
 H.ub=ub;
 H.primal_int_sol=primal_int_sol;
 

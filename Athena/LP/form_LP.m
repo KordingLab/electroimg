@@ -1,4 +1,4 @@
-function [C,A,B]=form_LP(G,T)
+function [C,A,B]=form_LP(T)
 
 %T.non_start*\gamma <=1
 A1=T.non_start_det;
