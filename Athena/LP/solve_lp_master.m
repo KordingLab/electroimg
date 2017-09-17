@@ -1,4 +1,4 @@
-function [primal_sol,dual_sol,lp_val]=solve_lp_master(T)
+function [primal_sol,dual_sol,lp_val]=solve_lp_master(G,T)
 
 
 [C,A,B]=form_LP(T);

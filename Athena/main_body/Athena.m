@@ -13,9 +13,15 @@ T.Theta=[];
 T.sub=[];
 T.dock_in=[];
 T.dock_out=[];
+dual_sol=[];
+dual_sol.lambda_1=zeros(G.N,1);
+dual_sol.lambda_2=zeros(G.ND,1);
 
+lp_val=-inf;
 for(step=1:G.opt.num_steps)
-    [dual_sol,~,lp_val]=solve_lp_master(T);
+    if(step>1.5)
+        [dual_sol,~,lp_val]=solve_lp_master(G,T);
+    end
     [T,tot_resid]=get_new_cols(G,dual_sol,T);
 %
     H.lp=[H.lp;lp_val];

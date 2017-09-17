@@ -1,10 +1,10 @@
 function Z=do_dyn_forward(G,R)
 
 Z=[];
-Z.sub=cell(G.n_sub,1);
-Z.cost=zeros(G.n_sub,1);
+Z.sub=cell(G.NS,1);
+Z.cost=zeros(G.NS,1);
 
-for(s=1:G.n_sub)
+for(s=1:G.NS)
     
     start_cost=R.start_cost;
     Z.cost=start_cost;
