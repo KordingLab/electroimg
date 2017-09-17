@@ -7,8 +7,11 @@ addpath('../Rounding')
 addpath('../pricing')
 in_name='my_data_file.mat';
 F=read_data(in_name);
-G=preprocess(F);
 
+params=[];
+params.por_keep=0.5;
+G=preprocess(F,params);
 G.opt.my_params=[];
+
 
 H=Athena(G);
