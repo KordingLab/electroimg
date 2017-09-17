@@ -9,12 +9,12 @@ for(s=1:G.NS)
     start_cost=R.start_cost;
     Z.cost=start_cost;
     Z.sub{s}=[s];
-    if(numel(G.pred{s})>0.5)
+    if(numel(G.dyn.pred{s})>0.5)
 
-        cost2go=Z.cost(G.pred{s});
-        cost2go=cost2go+R.theta_sub(s);
+        cost2go=Z.cost(G.dyn.pred{s});
+        cost2go=cost2go+R.sub_cost(s);
         [min_val,min_ind]=min(cost2go);
-        min_ind=G.pred{s}(min_ind);
+        min_ind=G.dyn.pred{s}(min_ind);
         if(min_val<start_cost)
             Z.cost(s)=min_val;
             Z.sub{s}=[Z.sub{s},s];
@@ -23,7 +23,10 @@ for(s=1:G.NS)
 end
 
 Z.cost=Z.cost+R.end_cost;
-inds_keep=find(Z.cost>=0);
+inds_keep=find(Z.cost<0);
 Z.cost=Z.cost(inds_keep);
-Z.sub=Z.sub{inds_keep};
+%jy_out_val('Z.sub',Z.sub)
+%jy_out_val('Z.sub',Z.sub)
+
+Z.sub=Z.sub(inds_keep);
 
