@@ -27,7 +27,7 @@ G.S.starts_soma=F.starts_soma;%=D(:,1);
 G.C.start_cost=F.start_cost;%=D(:,2);
 G.C.start_cost(G.S.dock_start_ind<0.5)=inf;%F.start_cost;%=D(:,2);
 G.C.term_cost=F.term_cost;%=D(:,3);
-G.C.cost=F.cost;
+G.C.cost=F.cost+params.offset_subtracks_cost;
 
 G.N=max(max(F.dets));
 G.NS=size(G.S.D,1);

@@ -1,9 +1,9 @@
 function [primal_sol,dual_sol,lp_val]=solve_lp_master(G,T)
 
-
-[C,A,B]=form_LP(T);
-
-[prim_info,lp_val,~,~,dual_info]=linprog(C,A,B,[],[],C*0,C*0+1.1);
+warning off;
+[C,A,B]=form_LP(G,T);
+options = optimoptions('linprog','Display','off');
+[prim_info,lp_val,~,~,dual_info]=linprog(C,A,B,[],[],C*0,C*0+1.1,[],options);
 
 primal_sol=[];
 primal_sol.prim_info=prim_info;
