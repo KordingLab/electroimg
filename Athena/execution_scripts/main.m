@@ -11,6 +11,7 @@ F=read_data(in_name);
 
 params=[];
 params.por_dock=0.5;
+params.por_dock=0.5;
 G=pre_process_stage1(F,params);
 G=pre_process_stage2(G);
 G=pre_process_stage3(G);

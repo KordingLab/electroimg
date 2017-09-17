@@ -3,6 +3,7 @@ function out_mat=con_sub(G,Z)
 v1=[];
 v2=[];
 v3=[];
+jy_out_val('numel(Z.cost)',numel(Z.cost))
 for(z=1:numel(Z.cost))
     v1=[v1;Z.sub_list{z}];
     v2=[v2;z*numel(Z.sub_list{z})];
