@@ -6,7 +6,8 @@ addpath('../LP')
 addpath('../Rounding')
 addpath('../pricing')
 in_name='my_data_file.mat';
-G=preprocess(in_name);
+F=read_data(in_name);
+G=preprocess(F);
 
 G.opt.my_params=[];
 

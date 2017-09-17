@@ -7,5 +7,6 @@ for(z=1:numel(Z.cost))
 
     cost=G.start_cost(sub_in(1));
     cost=cost+sum(G.sub_cost(sub_in));
+    cost=cost+G.term_cost(sub_in(end));
     out_mat(z)=cost;
 end 
