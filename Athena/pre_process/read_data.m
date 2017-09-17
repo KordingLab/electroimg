@@ -1,6 +1,6 @@
 function F=read_data(in_name)
 
-tmp=load('in_name');
+tmp=load(in_name);
 D=tmp.subtracks;
 %subtracks is in data 
 [~,my_order]=sortrows(D(:,5:end));

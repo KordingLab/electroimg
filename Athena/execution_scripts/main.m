@@ -1,16 +1,16 @@
 %Execution
 addpath('../data')
 addpath('../main_body')
-addpath('../preprocess')
+addpath('../pre_process')
 addpath('../LP')
 addpath('../Rounding')
 addpath('../pricing')
-in_name='my_data_file.mat';
+in_name='../data/subtracks.mat';
 F=read_data(in_name);
 
 params=[];
-params.por_keep=0.5;
-G=preprocess(F,params);
+params.por_dock=0.5;
+G=pre_process_stage1(F,params);
 G.opt.my_params=[];
 
 
