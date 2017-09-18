@@ -17,7 +17,7 @@ dual_sol=[];
 dual_sol.lambda_1=zeros(G.N,1);
 dual_sol.lambda_2=zeros(G.ND,1);
 
-lp_val=inf;
+lp_val=0;
 primal_sol=[];
 for(step=1:G.opt.num_steps)
     if(step>1.5)
