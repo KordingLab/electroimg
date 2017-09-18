@@ -5,8 +5,17 @@ dyn_info=set_up_dyn(G,dual_sol);
 Z=do_dyn_forward(G,dyn_info);
 if(numel(Z.cost)>0.5)
     [T_new,resid]=convert_dyn_2_mat(G,Z);
+    
+    if(sum([dual_sol.lambda_1;dual_sol.lambda_2])<.0001 )
+        
+        jy_out_sz('Z.cost',Z.cost)
+        jy_out_sz('resid',resid)
+        jy_out_val('[Z.cost,T_new.Theta]',[Z.cost,T_new.Theta])
+
+        pause
+    end
     T=augment_T(T,T_new);
-    tot_resid=sum(resid);
+    tot_resid=resid;
 
 else
     tot_resid=0;
