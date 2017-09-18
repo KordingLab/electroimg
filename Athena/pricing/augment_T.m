@@ -4,6 +4,8 @@ if(check_on && numel(T.X)>0)
 
     [a1,a2]=ismember(T_new.X',T.X','rows');
     if(sum(a1)>0.5)
+        jy_out_val('sum(a1)',sum(a1))
+        jy_out_sz('a1',a1)
         disp('duplicate present')
         pause;
     end
