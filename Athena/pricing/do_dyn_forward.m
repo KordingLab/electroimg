@@ -1,6 +1,5 @@
 function Z=do_dyn_forward(G,R)
 
-
 Z=[];
 Z.sub=cell(G.NS,1);
 Z.cost=zeros(G.NS,1);
@@ -25,11 +24,6 @@ for(s=1:G.NS)
     end
     len_list(s)=numel(Z.sub{s});
 end
-%jy_out_val('max(len_list)',max(len_list))
-%jy_out_val('min(len_list)',min(len_list))
-%jy_out_val('mean(len_list)',mean(len_list))
-%jy_out_val('median(len_list)',median(len_list))
-%pause
 
 Z.cost=Z.cost+R.end_cost;
 inds_keep=find(Z.cost<0);
