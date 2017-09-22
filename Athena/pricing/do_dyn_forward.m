@@ -4,7 +4,6 @@ Z=[];
 Z.sub=cell(G.NS,1);
 Z.cost=zeros(G.NS,1);
 
-len_list=zeros(G.NS,1);
 for(s=1:G.NS)
     
     start_cost=R.start_cost(s);
@@ -22,10 +21,9 @@ for(s=1:G.NS)
             
         end
     end
-    len_list(s)=numel(Z.sub{s});
 end
 
 Z.cost=Z.cost+R.end_cost;
-inds_keep=find(Z.cost<0);
+inds_keep=find(Z.cost<-.0001);
 Z.cost=Z.cost(inds_keep);
 Z.sub=Z.sub(inds_keep);

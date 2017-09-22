@@ -6,7 +6,7 @@ A1=T.non_start;
 B1=ones(G.N,1);
 
 
-A2=-T.dock_in+0.5*T.dock_out;
+A2=0.5*T.dock_in-T.dock_out;
 B2=zeros(G.ND,1);
 
 A=[A1;A2];

@@ -4,7 +4,7 @@ function [T,tot_resid]=get_new_cols(G,dual_sol,T)
 dyn_info=set_up_dyn(G,dual_sol);
 Z=do_dyn_forward(G,dyn_info);
 if(numel(Z.cost)>0.5)
-    [T_new,resid]=convert_dyn_2_mat(G,Z);
+    [T_new,resid]=convert_dyn_2_mat(G,Z,dual_sol);
     
     if(sum([dual_sol.lambda_1;dual_sol.lambda_2])<.0001 )
         if(.01<sum(abs(Z.cost-T_new.Theta)))
@@ -16,7 +16,7 @@ if(numel(Z.cost)>0.5)
         end
 
     end
-    T=augment_T(T,T_new);
+    T=augment_T(T,T_new,Z.cost);
     tot_resid=resid;
 
 else
