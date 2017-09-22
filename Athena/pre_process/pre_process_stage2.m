@@ -32,4 +32,18 @@ for(s=1:G.NS)
     
     pred_ind=G.S.pre_fix_ind(s);
     G.dyn.pred{s}=G.dock.post2sub{pred_ind};
+    jy_out_val('s',s)
+    jy_out_val('pred_ind',pred_ind)
+    jy_out_val('G.S.pre_fix_ind(s)',G.S.pre_fix_ind(s))
+    pause
 end
+
+%soma_dock_inds=find(G.S.starts_soma>0.5);
+%soma_dock_inds
+
+
+G.dock.start_soma=double(G.S.D(G.dock_list,1)<1.1);
+%if(sum(G.dock.start_soma)>1.1)
+%    disp('only one doc can be a soma in our system')
+%    pause
+%end

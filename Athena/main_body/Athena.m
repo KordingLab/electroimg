@@ -25,6 +25,7 @@ for(step=1:G.opt.num_steps)
     end
     [T,tot_resid]=get_new_cols(G,dual_sol,T);
 %
+
     lb=lp_val+tot_resid;
     H.lp=[H.lp;lp_val];
     H.lb=[H.lb;lb];

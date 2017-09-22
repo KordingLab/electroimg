@@ -16,6 +16,10 @@ T_new.Theta=con_Theta(G,Z);
 T_new.dock_in=con_dock_in(G,Z);
 T_new.dock_out=con_dock_out(G,Z);
 
+%jy_out_val('T_new.dock_in(1)',T_new.dock_in(1))
+%jy_out_val('T_new.dock_out(1)',T_new.dock_out(1))
+%jy_out_val('Z.cost(1)',Z.cost(1))
+%pause;
 %jy_out_sz('T_new.X',T_new.X)
 %jy_out_sz('dual_sol.lambda_1',dual_sol.lambda_1)
 det_term=T_new.X'*dual_sol.lambda_1;

@@ -28,6 +28,15 @@ else
 %    lp_val
 %    pause
 end
+if(lp_val>-.0001)
+    disp('im confused')
+    lp_val
+    pause
+else
+    disp('LP value is  find')
+    lp_val
+    
+end
 primal_sol=[];
 primal_sol.prim_info=prim_info;
 
@@ -42,7 +51,7 @@ start_term=0.5*T.dock_in'*dual_sol.lambda_2;
 end_term=-1*T.dock_out'*dual_sol.lambda_2;
 reduced_cost_guess=T.Theta+det_term+start_term+end_term;
 
-if(-.00000001> min(reduced_cost_guess) )
+if(-.0001> min(reduced_cost_guess) )
     [min_val,min_ind]=min(reduced_cost_guess);
     jy_out_val('det_term(min_ind)',det_term(min_ind))
     jy_out_val('start_term(min_ind)',start_term(min_ind))
