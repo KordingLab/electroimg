@@ -22,6 +22,6 @@ if(tot_dual<.00000001)
     R.is_first_solve=1;
 end
 
-jy_out_val('R.start_cost(7)',R.start_cost(7))
+%jy_out_val('R.start_cost(7)',R.start_cost(7))
 
-pause
+%pause

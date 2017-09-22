@@ -1,11 +1,10 @@
-function [T_new,resid,reduced_cost_guess]=convert_dyn_2_mat(G,Z,dual_sol)
+function [T_new,reduced_cost_guess]=convert_dyn_2_mat(G,Z,dual_sol)
 
 if(max(Z.cost)>=0)
     jy_out_val('max(Z.cost)',max(Z.cost))
     disp('flag me no good')
     pause
 end
-resid=sum(Z.cost);
 T_new=[];
 
 T_new.sub=con_sub(G,Z);

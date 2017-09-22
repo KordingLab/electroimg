@@ -24,7 +24,7 @@ else
         flag
         pause
     end
-    jy_out_val('sum(abs(prim_info))',sum(abs(prim_info)))
+    %jy_out_val('sum(abs(prim_info))',sum(abs(prim_info)))
 %    lp_val
 %    pause
 end
@@ -33,8 +33,8 @@ if(lp_val>-.0001)
     lp_val
     pause
 else
-    disp('LP value is  find')
-    lp_val
+    %disp('LP value is  find')
+    %lp_val
     
 end
 primal_sol=[];

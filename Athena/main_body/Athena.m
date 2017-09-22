@@ -31,7 +31,7 @@ for(step=1:G.opt.num_steps)
     H.lb=[H.lb;lb];
 %
     jy_out_val('step',step)
-    jy_out_val('H.lp',H.lp)
+    jy_out_val('min(H.lp)',min(H.lp))
     jy_out_val('tot_resid',tot_resid)
     jy_out_val('max(H.lb)',max(H.lb))
     disp('---------')
@@ -43,5 +43,6 @@ end
 
 [primal_int_sol,ub]=solve_ilp_master(G,T);
 H.ub=ub;
+jy_out_val('ub',ub)
 H.primal_int_sol=primal_int_sol;
 
