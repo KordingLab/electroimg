@@ -24,13 +24,14 @@ G.S.post_fix=G.S.D(:,2:end);
 [~,G.S.dock_start_ind]=ismember(G.S.pre_fix,dock_list,'rows');
 [~,G.S.dock_end_ind]=ismember(G.S.post_fix,dock_list,'rows');
 G.S.starts_soma=F.starts_soma;%=D(:,1);
-G.C.start_cost=F.start_cost;%=D(:,2);
-G.C.start_cost(G.S.dock_start_ind<0.5)=inf;%F.start_cost;%=D(:,2);
-G.C.term_cost=F.term_cost;%=D(:,3);
-G.C.cost=F.cost+params.offset_subtracks_cost;
 
-G.N=max(max(F.dets));
-G.NS=size(G.S.D,1);
-G.ND=size(G.dock_list,1);
-G.NJ=size(G.join_list,1);
-G.LS=size(G.S.D,2);
+G.C.start_cost=F.start_cost;%start cost 
+G.C.start_cost(G.S.dock_start_ind<0.5)=inf;%infinite start cost at non-docks
+G.C.term_cost=F.term_cost;%cost to terminate a track
+G.C.cost=F.cost+params.offset_subtracks_cost;%final cost
+
+G.N=max(max(F.dets));%number of detections 
+G.NS=size(G.S.D,1);%number of Subtracks
+G.ND=size(G.dock_list,1);%number of docks
+G.NJ=size(G.join_list,1);%number of join poits
+G.LS=size(G.S.D,2);%length of subtracks
