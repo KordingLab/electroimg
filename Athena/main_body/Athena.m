@@ -42,6 +42,7 @@ for(step=1:G.opt.num_steps)
 end
 
 [primal_int_sol,ub]=solve_ilp_master(G,T);
+H.lineage=get_lineage(G,primal_int_sol);
 H.ub=ub;
 jy_out_val('ub',ub)
 H.primal_int_sol=primal_int_sol;
