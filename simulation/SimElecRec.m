@@ -133,6 +133,10 @@ classdef SimElecRec
         end
         
         function subtracks = subtracks(obj, time_location_amp, k, threshold)
+            % k is the number of steps for the subtracks
+            % output is a matrix of suntrcks * (k+4)
+            % first column = being soma
+            % second column = being branch
             all_indecies_t = obj.time_indecies(time_location_amp);
             detections_on_subtrack = obj.all_appropriate_indecies(k,all_indecies_t);
             n_subtrack = size(detections_on_subtrack,1);
@@ -145,7 +149,8 @@ classdef SimElecRec
             time_subtracks = time_location_amp(detections_on_subtrack(:,k),1);
             possible_branch = zeros(n_subtrack,1);
             possible_terminal = zeros(n_subtrack,1);
-            distance = squareform(pdist(time_location_amp(:,2:4)));
+            % distance = squareform(pdist(time_location_amp(:,2:4)));
+            distance = obj.square_pdist_accessories(time_location_amp(:,2:4));
             for t=k:max(time_subtracks)-1
                 next_frame = all_indecies_t{t+1};
                 subtrack_indecis = find(time_subtracks==t);
@@ -287,6 +292,14 @@ classdef SimElecRec
                 swc(i, 3:5) = time_location_amp(lineage(lineage_in_index(i)),2:4);
             end
             save(save_path,'swc')
+        end
+        
+        function dist = square_pdist_accessories(obj, matrix)
+            n = size(matrix, 1);
+            dist = zeros(n,n);
+            for i=1:n
+                dist(i, :) = sqrt(sum((matrix - ones(n,1)*matrix(i,:)).^2,2));
+            end
         end
     end
 end
