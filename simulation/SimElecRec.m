@@ -1,83 +1,110 @@
 classdef SimElecRec
     properties
-        %first_split_amplitude = @(x) x - .1;
-        %second_split_amplitude = @(x) x - .05;
-        first_split_amplitude = @(x) x;
-        second_split_amplitude = @(x) x;
+        first_split_amplitude = @(x) x;  % = @(x) x - .1;
+        second_split_amplitude = @(x) x;  % = @(x) x - .05;
+        % the change in amplitude value of the signal when it passes through one
+        % split
         noise = 0;
-        var_signals = 7;
+        var_signals = 0;
         mesh = 128;
+        n_detects = 1;
     end
     
     methods
-        function [sim, all_index_amp_active, all_location_amp_detections, time_location_amp] = ...
-                simulation(obj, initialization, swc_matrix, T, dt)
-            % initialization is a n*4 matrix that the 1:3 columns shows the
+        function [all_index_amp_active, all_location_amp_detections, ...
+                index_location_amp_time] = simulation(obj, initialization, swc_matrix, T, dt)
+            % Parameters:
+            % -----------
+            % initialization:
+            % a matrix with 4 columns, the first 3 columns show the
             % 3d locations and the last column shows the amplitudes.
-            % x_rec_vertex: 1*2 matrix of x cordinate of the vertex of the recording plane
-            n_detects = 1;
+            
+            % swc_matrix: swc matrix of neuron (size n*7)
+            % T: float,  Recording time
+            % dt: bin for timing
+            
+            % Returns:
+            % --------
+            % all_index_amp_active: cell, list of detections
+            % elements in the cell have index (in swc) amplitude and time
+            % all_location_amp_detections:
+            % time_location_amp:
             neuron_locations = swc_matrix(:, 3:5);
             parent_index = swc_matrix(:, 7);
-            x_rec_vertex = [min(swc_matrix(:,3))-10,max(swc_matrix(:,3))+10];
-            y_rec_vertex = [min(swc_matrix(:,4))-10,max(swc_matrix(:,4))+10];
             
-            forward_matrix = obj.forward_matrix_of_one_neuron(parent_index);
-            
+            % Initialization
             active_index = obj.nearest_neuron_index_from_3d_loc(neuron_locations, initialization(:,1:3));
             index_amp_active = [active_index; transpose(initialization(:,4))];
-            step = floor(T/dt);
             
             all_index_amp_active = cell(1, 1);
             all_location_amp_detections = cell(1, 1);
             
             all_index_amp_active{1} = index_amp_active;
-            detect = obj.detection(index_amp_active, neuron_locations, n_detects, obj.var_signals);
+            detect = obj.detection(index_amp_active, neuron_locations, obj.n_detects, obj.var_signals);
             all_location_amp_detections{1} = detect;
-            time_location_amp = [ones(size(detect,1),1),detect];
+            index_location_amp_time = [detect, ones(size(detect,1),1)];
             n_step = 1;
             i = 2;
             
-            while(i<step && length(index_amp_active)~=0)
-                index_amp_active = obj.next_active_indcies(forward_matrix, parent_index, index_amp_active, n_step);
+            %%%%%% this is the time evolving part of the function %%%%%
+            
+            % to ensure that the current time is always less than final time and
+            % there is an active signal somewhere in each step, the while
+            % loop is written.
+            forward_matrix = obj.forward_matrix_of_one_neuron(parent_index);
+            while(i < floor(T/dt) && length(index_amp_active)~=0)
+                
+                index_amp_active = obj.next_active_indcies(forward_matrix, ...
+                    parent_index, index_amp_active, n_step);
                 all_index_amp_active{1, end+1} = index_amp_active;
-                detect = obj.detection(index_amp_active, neuron_locations, n_detects, obj.var_signals);
+                detect = obj.detection(index_amp_active, neuron_locations, ...
+                    obj.n_detects, obj.var_signals);
                 all_location_amp_detections{1, end+1} = detect;
                 n_detect = size(detect,1);
-                time_location_amp(end+1:end+n_detect,:) = [i*ones(n_detect,1),detect];
+                
+                index_location_amp_time(end+1:end+n_detect,:) = ...
+                    [detect, i*ones(n_detect,1)];
                 i = i + 1;
             end
             
-            sim = obj.recording(x_rec_vertex, y_rec_vertex, obj.mesh, all_location_amp_detections(1:end-1));
         end
         
-        function product = product(obj, A,B)
-            product = [];
-            for i=1:length(B)
-                product = [product;[A,B(i)*ones(size(A,1),1)]];
-            end
+        function forward_matrix = forward_matrix_of_one_neuron(obj, parent_index)
+            % Parameters:
+            % -----------
+            % parent_index
+            % the index of the paretn in the swc format of the neuron.
             
-        end
-        
-        function products = products(obj, A)
-            % A is a cell containing horizental matries
-            % Return: the product of all matries
-            products = obj.product(A{1},A{2});
-            for i=3:length(A)
-                products = obj.product(products,A{i});
-            end
-        end
-        
-        
-        
-        function indecies = all_appropriate_indecies(obj, k, times)
-            indecies = obj.products(times(1:k));
-            for i=2:length(times)-k+1
-                indecies = [indecies; obj.products(times(i:k+i-1))];
+            % Returns:
+            % --------
+            % forwad_matrix
+            % forward_matrix has the shape of 2*n where n is the number of
+            % the indecies of neuron. if the node is branching then the 2
+            % arrays are its children otherwise they are the same.
+            n = length(parent_index);
+            forward_matrix = zeros(2, n);
+            for i=2:n
+                I = find(parent_index==i);
+                if(length(I)>0)
+                    forward_matrix(:,i) = I;
+                end
             end
         end
         
         function index = nearest_neuron_index_from_3d_loc(obj, neuron_locations, given_locations)
-            % return the index of the closest nodes of the neuron.
+            % Returing the indcies of closest point in neuron_locations
+            % from the given location.
+            
+            % Parameters:
+            % ----------
+            % neuron_locations: the 3d locations of all nodes of neuron.
+            %
+            % given_locations: the location of given points.
+            %
+            % Returns:
+            % --------
+            % index:
+            % the index of the closest nodes of the neuron.
             nl = size(neuron_locations,1);
             gl = size(given_locations,1);
             index = zeros(1, gl);
@@ -86,15 +113,16 @@ classdef SimElecRec
                 index(i) = ind;
             end
         end
-        
-        function new_index_amp_active = next_active_indcies(obj, forward_matrix, parent_index, index_amp_active, n_itr)
-            for i=1:n_itr
+        function new_index_amp_active = next_active_indcies(obj, ...
+                forward_matrix, parent_index, index_amp_active, n_step)
+            for i=1:n_step
                 index_amp_active = next(obj, forward_matrix, parent_index, index_amp_active);
             end
             new_index_amp_active = index_amp_active;
         end
         
         function next = next(obj, forward_matrix, parent_index, index_amp_active)
+            % the next step of simulation
             new_active_index = [];
             new_index_amp_active = [];
             if(size(index_amp_active,2)~=0)
@@ -123,53 +151,11 @@ classdef SimElecRec
             next = [new_active_index; new_index_amp_active];
         end
         
-        function time_ind = time_indecies(obj, time_location_amp)
-            time_ind = cell(0);
-            first_time = min(time_location_amp(:,1));
-            last_time = max(time_location_amp(:,1));
-            for i = first_time:last_time
-                time_ind{i} = find(time_location_amp(:,1)==i);
-            end
-        end
-        
-        function subtracks = subtracks(obj, time_location_amp, k, threshold)
-            % k is the number of steps for the subtracks
-            % output is a matrix of suntrcks * (k+4)
-            % first column = being soma
-            % second column = being branch
-            all_indecies_t = obj.time_indecies(time_location_amp);
-            detections_on_subtrack = obj.all_appropriate_indecies(k,all_indecies_t);
-            n_subtrack = size(detections_on_subtrack,1);
-            subtracks = ones(n_subtrack, k+4);
-            length_subtracks = zeros(n_subtrack,1);
-            for i=1:k-1
-                dis = time_location_amp(detections_on_subtrack(:,i),2:4)-time_location_amp(detections_on_subtrack(:,i+1),2:4);
-                length_subtracks = length_subtracks + sqrt(sum(dis.^2,2));
-            end
-            time_subtracks = time_location_amp(detections_on_subtrack(:,k),1);
-            possible_branch = zeros(n_subtrack,1);
-            possible_terminal = zeros(n_subtrack,1);
-            % distance = squareform(pdist(time_location_amp(:,2:4)));
-            distance = obj.square_pdist_accessories(time_location_amp(:,2:4));
-            for t=k:max(time_subtracks)-1
-                next_frame = all_indecies_t{t+1};
-                subtrack_indecis = find(time_subtracks==t);
-                end_detection = detections_on_subtrack(subtrack_indecis,k);
-                threshold_dist = sum(distance(end_detection, next_frame)<threshold,2);
-                possible_branch(subtrack_indecis) = max(sign(threshold_dist-1),0);
-                possible_terminal(subtrack_indecis) =  1 - sign(threshold_dist);
-            end
-            %subtracks(find(detections_on_subtrack(:,1)==1),1) = 1;
-            subtracks(2:end,1) = 0;
-            subtracks(:,2) = possible_branch;
-            subtracks(:,3) = possible_terminal;
-            subtracks(:,4) = length_subtracks;
-            subtracks(:,5:k+4) = detections_on_subtrack(:,1:k);
-        end
-        function detections = detection(obj, index_amp_active, neuron_locations,n_detects, var_signals)
+        function detections = detection(obj, index_amp_active, ...
+                neuron_locations, n_detects, var_signals)
             % Parameters:
             % index_amp_active: a matrix of the size ?*2 that contains the
-            % indexof the active index at the first column and the
+            % index of the active index at the first column and the
             % amplitudes of each index in the second column.
             %
             % neuron_locations: ?*3 matrix of x, y and z of the locations
@@ -186,26 +172,94 @@ classdef SimElecRec
                 n_index = length(index_amp_active(1,:));
                 
                 for i=1:n_index
-                    detections(1+(i-1)*n_detects:i*n_detects,1:3) = ones(n_detects,1)*loc_actives(i,:) + var_signals*rand(n_detects,3);
-                    detections(1+(i-1)*n_detects:i*n_detects,4) = ones(n_detects,1)*index_amp_active(2, i);
+                    detections(1+(i-1)*n_detects:i*n_detects,1) = ...
+                        index_amp_active(1,i)*ones(n_detects);
+                    detections(1+(i-1)*n_detects:i*n_detects,2:4) = ...
+                        ones(n_detects,1)*loc_actives(i,:) + var_signals*rand(n_detects,3);
+                    detections(1+(i-1)*n_detects:i*n_detects,5) = ones(n_detects,1)*index_amp_active(2, i);
                 end
             end
         end
         
-        function forward_matrix = forward_matrix_of_one_neuron(obj, parent_index)
-            % input: parent_index
-            % the index of the paretn in the swc format of the neuron.
-            % return: forwad_matrix
-            % forward_matrix has the shape of 2*n where n is the number of
-            % the indecies of neuron. if the node is branching then the 2
-            % arrays are its children otherwise they are the same.
-            n = length(parent_index);
-            forward_matrix = zeros(2, n);
-            for i=2:n
-                I = find(parent_index==i);
-                if(length(I)>0)
-                    forward_matrix(:,i) = I;
-                end
+        function subtracks = subtracks(obj, index_location_amp_time, k, threshold)
+            % k is the number of steps for the subtracks
+            % output is a matrix of suntrcks * (k+4)
+            % first column = being soma
+            % Second column = being branch
+            time_location_amp = index_location_amp_time(:,2:end-1);
+            time_location_amp = [index_location_amp_time(:, end), time_location_amp];
+            all_indecies_t = obj.time_indecies(time_location_amp);
+            detections_on_subtrack = obj.all_appropriate_indecies(k,all_indecies_t);
+            n_subtrack = size(detections_on_subtrack,1);
+            subtracks = ones(n_subtrack, k+4);
+            length_subtracks = zeros(n_subtrack,1);
+            for i=1:k-1
+                dis = time_location_amp(detections_on_subtrack(:,i),2:4)-...
+                    time_location_amp(detections_on_subtrack(:,i+1),2:4);
+                length_subtracks = length_subtracks + sqrt(sum(dis.^2,2));
+            end
+            time_subtracks = time_location_amp(detections_on_subtrack(:,k),1);
+            possible_branch = zeros(n_subtrack,1);
+            possible_terminal = zeros(n_subtrack,1);
+            % distance = squareform(pdist(time_location_amp(:,2:4)));
+            distance = obj.square_pdist_accessories(time_location_amp(:,2:4));
+            for t=k:max(time_subtracks)-1
+                next_frame = all_indecies_t{t+1};
+                subtrack_indecis = find(time_subtracks==t);
+                end_detection = detections_on_subtrack(subtrack_indecis,k);
+                threshold_dist = sum(distance(end_detection, next_frame)<threshold,2);
+                possible_branch(subtrack_indecis) = max(sign(threshold_dist-1),0);
+                possible_terminal(subtrack_indecis) =  1 - sign(threshold_dist);
+            end
+            %subtracks(find(detections_on_subtrack(:,1)==1),1) = 1;
+            
+            subtracks(2:end,1) = 0;
+            subtracks(:,2) = possible_branch;
+            subtracks(:,3) = possible_terminal;
+            subtracks(:,4) = length_subtracks;
+            subtracks(:,5:k+4) = detections_on_subtrack(:,1:k);
+        end
+        
+        function product = product(obj, A,B)
+            product = [];
+            for i=1:length(B)
+                product = [product;[A,B(i)*ones(size(A,1),1)]];
+            end
+            
+        end
+        
+        function products = products(obj, A)
+            % A is a cell containing horizental matries
+            % Return: the product of all matries
+            products = obj.product(A{1},A{2});
+            for i=3:length(A)
+                products = obj.product(products,A{i});
+            end
+        end
+        
+        
+        
+        function indecies = all_appropriate_indecies(obj, k, times)
+            indecies = obj.products(times(1:k));
+            for i=2:length(times)-k+1
+                indecies = [indecies; obj.products(times(i:k+i-1))];
+            end
+        end
+        
+        function time_ind = time_indecies(obj, time_location_amp)
+            time_ind = cell(0);
+            first_time = min(time_location_amp(:,1));
+            last_time = max(time_location_amp(:,1));
+            for i = first_time:last_time
+                time_ind{i} = find(time_location_amp(:,1)==i);
+            end
+        end
+        
+        function dist = square_pdist_accessories(obj, matrix)
+            n = size(matrix, 1);
+            dist = zeros(n,n);
+            for i=1:n
+                dist(i, :) = sqrt(sum((matrix - ones(n,1)*matrix(i,:)).^2,2));
             end
         end
         
@@ -239,6 +293,17 @@ classdef SimElecRec
                 
             end
             
+        end
+        
+        function video_frames = video(obj, swc_matrix, all_location_amp_detections)
+            % Returns:
+            % --------
+            % video_frames: 3d matrix
+            %   a matrix of size n*128*128 where n is the number of frames.
+            x_rec_vertex = [min(swc_matrix(:,3))-10,max(swc_matrix(:,3))+10];
+            y_rec_vertex = [min(swc_matrix(:,4))-10,max(swc_matrix(:,4))+10];
+            video_frames = obj.recording(x_rec_vertex, y_rec_vertex, obj.mesh, ...
+                all_location_amp_detections(1:end-1));
         end
         function show_sim(obj, records)
             for i = 1:size(records,1)
@@ -294,12 +359,5 @@ classdef SimElecRec
             save(save_path,'swc')
         end
         
-        function dist = square_pdist_accessories(obj, matrix)
-            n = size(matrix, 1);
-            dist = zeros(n,n);
-            for i=1:n
-                dist(i, :) = sqrt(sum((matrix - ones(n,1)*matrix(i,:)).^2,2));
-            end
-        end
     end
 end
