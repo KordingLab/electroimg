@@ -8,6 +8,9 @@ classdef SimElecRec
         var_signals = 0;
         mesh = 128;
         n_detects = 1;
+        theta_plus = [];
+        theta_minus = [];
+        theta_zero = [];
     end
     
     methods
@@ -20,13 +23,13 @@ classdef SimElecRec
             % 3d locations and the last column shows the amplitudes.
             
             % swc_matrix: swc matrix of neuron (size n*7)
-            % T: float,  Recording time
-            % dt: bin for timing
+            
+            % T:
+            % dt:
             
             % Returns:
             % --------
-            % all_index_amp_active: cell, list of detections
-            % elements in the cell have index (in swc) amplitude and time
+            % all_index_amp_active:
             % all_location_amp_detections:
             % time_location_amp:
             neuron_locations = swc_matrix(:, 3:5);
@@ -97,9 +100,9 @@ classdef SimElecRec
             
             % Parameters:
             % ----------
-            % neuron_locations: the 3d locations of all nodes of neuron.
+            % neuron_locations:
             %
-            % given_locations: the location of given points.
+            % given_locations:
             %
             % Returns:
             % --------
@@ -122,7 +125,7 @@ classdef SimElecRec
         end
         
         function next = next(obj, forward_matrix, parent_index, index_amp_active)
-            % the next step of simulation
+            %
             new_active_index = [];
             new_index_amp_active = [];
             if(size(index_amp_active,2)~=0)
@@ -358,6 +361,65 @@ classdef SimElecRec
             end
             save(save_path,'swc')
         end
-        
+        function grand_t = grand_truth(obj, D, P, C, S, k)
+            grand_t = [];
+            for i=1:max(C)
+                par = i;
+                grand_parent = zeros(1,k);
+                for i=1:k
+                    if par > 0
+                        grand_parent(k-i+1) = par;
+                        par = P(par);
+                    end
+                end
+                index_in_C = zeros(1,k);
+                for i=1:k
+                    if grand_parent(i) > 0
+                        index_in_C(i) = find(C == grand_parent(i));
+                    end
+                end
+                
+                a = find(sum(abs(S- ones(size(S, 1), 1) * index_in_C), 2)==0);
+                if ~isempty(a)
+                    grand_t(end+1) = a;
+                end
+            end
+        end
+        function [theta_plus, theta_minus, theta_zero] = theta_cost(obj, S)
+            theta_plus = ones(1, size(S,1));
+            theta_minus = ones(1, size(S,1));
+            theta_zero = ones(1, size(S,1));
+        end
+        function [s_plus, s_minus, s_zero] = s_function(obj, p, S)
+            s_plus = [];
+            s_minus = [];
+            s_zero = [];
+            for i=p
+                
+                a = find(sum(abs(S(p, 1:end-1) - ones(length(p), 1) * S(i, 2:end)), 2)==0);
+                b = find(sum(abs(S(p, 2:end) - ones(length(p), 1) * S(i, 1:end-1)), 2)==0);
+                if isempty(a)
+                    s_plus(end+1) = i;
+                end
+                if isempty(b)
+                    s_minus(end+1) = i;
+                end
+                if ~isempty(a) && ~isempty(b)
+                    s_zero(end+1) = i;
+                end
+            end
+        end
+        function [X, X_hat] = X_function(obj, S, D, p)
+            
+            detection_in = [];
+            for i=1:k
+                detection_in(end+1:end+length(p)) = S(p,i);
+            end
+            detection_in = unique(detection_in);
+            X = zeros(1, size(D, 1));
+            X_hat = zeros(1, size(D, 1));
+            X(detection_in) = 1;
+            X_hat(unique(S(p, k))) = 1;
+        end
     end
 end
