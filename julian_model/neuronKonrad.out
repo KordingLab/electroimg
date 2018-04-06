@@ -1,12 +1,12 @@
-\BOOKMARK [1][-]{section.1}{Simulation}{}% 1
-\BOOKMARK [1][-]{section.2}{Formulation}{}% 2
-\BOOKMARK [2][-]{subsection.2.1}{Tracks }{section.2}% 3
-\BOOKMARK [2][-]{subsection.2.2}{Sub-Tracks }{section.2}% 4
-\BOOKMARK [2][-]{subsection.2.3}{Costs }{section.2}% 5
-\BOOKMARK [2][-]{subsection.2.4}{Collection of Tracks}{section.2}% 6
-\BOOKMARK [2][-]{subsection.2.5}{Feasibility}{section.2}% 7
-\BOOKMARK [1][-]{section.3}{LP relaxation}{}% 8
-\BOOKMARK [1][-]{section.4}{augmenting}{}% 9
-\BOOKMARK [1][-]{section.5}{Dyanmic form}{}% 10
-\BOOKMARK [1][-]{section.6}{Update feasiblity}{}% 11
-\BOOKMARK [1][-]{section.7}{Double Update}{}% 12
+\BOOKMARK [1][-]{section.1}{Formulation}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Tracks }{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Sub-Tracks }{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.3}{Costs }{section.1}% 4
+\BOOKMARK [2][-]{subsection.1.4}{Collection of Tracks}{section.1}% 5
+\BOOKMARK [2][-]{subsection.1.5}{Feasibility}{section.1}% 6
+\BOOKMARK [1][-]{section.2}{LP relaxation}{}% 7
+\BOOKMARK [1][-]{section.3}{augmenting}{}% 8
+\BOOKMARK [1][-]{section.4}{Dyanmic form}{}% 9
+\BOOKMARK [1][-]{section.5}{Update feasiblity}{}% 10
+\BOOKMARK [1][-]{section.6}{Double Update}{}% 11
+\BOOKMARK [1][-]{section.7}{simulation}{}% 12
