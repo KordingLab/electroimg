@@ -101,12 +101,6 @@ We consider the problem of describing neurons in single neuron images.  To do th
 %
 \end{abstract}
 
-\section{Simulation}
-To validate the method that we present here, we generate synthetic data where we know the ground truth and ask the model described above to reconstruct the morphology of neuron. The synthetic data represent by a $n\times 3$ matrix where $n$ is the number of all detection in the whole recording and the columns are x coordinate, y coordinate and time of each detection. Hence the set $\mathcal{D}$  has $n$ elements. Also we can fit $k=5$ since usually the segments of neuron (the section between two branching point) have the length longer than $5$ detection. Finally to apply the model we need to know the cost function. The neuron can be detected by solving a minimization problem which is written in \ref{cost_neuron}. In this setup, a neuron is a combination of tracks (i.e. segments), indexed by $p$, and to find the cost of detection of one neuron, the cost of each of its tracks should be calculated separately and then summation over all tracks the cost of the neuron can be calculated. The constrains of ILP are coming from the fact that the combination of these segments are a tree like object. For example, at most two track have a common starting point. In sum, by knowing the cost of each track, we can calculate the cost of neuron. Therefore we need to know the cost of one track in formula \ref{cost_track} For the first simulation, I have dropped the amplitude of each detection and hence we can ignore the notation for starting and terminating by a sub-track. Indeed this can be justify by saying that a track, a set of sub-tracks, are modeled here by having different behavior at its end points compared to its intermediate points and the source of this different behavior is coming from amplitude (not the location) of detection. Hence instead of having $\theta_{s+}, \theta_{s-}, \theta_{s0}$ we use one notation $\theta_{s}$ where s is the sub-track.
-Finally to define the cost of sub-track, we can define:
-\begin{equation}
-\theta (s) = \theta ( \{ s_1, \cdots s_k\} ) = \sum_{i=1}^{k-1} ||\text{location}(s_k) - \text{location}(s_{k+1}) ||_2
-\end{equation}
 \section{Formulation}
 \subsection{Tracks }
 
@@ -310,6 +304,20 @@ $K^+$ is the dock start.  $K^-$ is the end dock
 \max_{\substack{\lambda^1 \geq 0 \\ \lambda^2 \geq 0}}1^{\top }\lambda^1\\
 \nonumber \Gamma+X^\top \lambda^1+(\frac{1}{2}K^+ -K^-)^{\top}\lambda^2	 \geq 0
 \end{align}
+
+\section{simulation}
+ To check how accurate we can recover the morphology from electrical activity, we test the model on the simulated activity of a neuron. While we record the electrical activity, in each time frame a few sites have high voltage. To fix the terminology, each of these sites is called a detection. For each detection we can record its 3d location, amplitude of its voltage and the time of occurrence. Simulation initializes with artificially activating a set of sites on underlying neuron. As the simulation runs, each detection leads to new set of detection(s) by moving on the underlying neurons. When a detection is on a segment (a segment is the part of neuron between two branching points) it generates a new detection nearby in the next time frame. However if detection pass through a branching point, it leads to two new detections. Having the geometrical graph of neurons, their synapse and initial activation, we can run the network for arbitrary time. 
+
+To track the data during simulation, we set the list of all the detections (for all times). Detection matrix ($D$) is a matrix of size $d \times 5$ where $d$ is the number of detection and $5$ columns are following information:
+\begin{enumerate}
+\item First to third columns: 3d location (xyz) of a detection point
+\item Fourth column: the amplitude of detection.
+\item Fifth column: The time that detection is recorded.
+\end{enumerate}
+Notice that this information is all that we know when we record electrical activity of neurons. However, in simulation, we have two supplementary data. Firstly, we know the underlying neuron (ground truth). A neuron is represents by its geometrical graph where we know the parent index of each node and the node being soma. We always index the node for a neuron such that the first index is soma. Hence we can summarize neuron by its parent index matrix ($P$) which is a matrix of $N_\text{node}\times 1$ where $N_\text{node}$ is number of nodes in the neuron. Since soma does not have parent, it is assumed that $P(1) = -1$. Secondly, we know that what is the corresponding node in the neuron for every detection. In other word, for each row index $D$ we know the mapping into the list of index of nodes of neuron. This data is stored as $C$ which is a $d \times 1$ matrix and each array is a value between $1$ and $N_\text{node}$.
+
+Next we want to implement sub-track matrix. Remember that sub-tracks are all possible sequence of length $k$ from detection. One criteria for a sub-track to be a part of a track is that the timing of its element should be consecutive. This helps us to avoid making a long matrix of sub-tracks and pick only the sequence of detections that their corresponding times are consecutive. All of these sequnces are listed in a matrix $S$ of size $s \times k$. The $(i, j)$ array of $S$ is detection index of  $j$-th element of $i$-th sub-track. 
+
 
 \bibliographystyle{ieee}
 \bibliography{bib_inst_track}
