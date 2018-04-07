@@ -409,7 +409,7 @@ classdef SimElecRec
                 end
             end
         end
-        function [X, X_hat] = X_function(obj, S, D, p)
+        function [X, X_hat] = X_function(obj, p, S, D, k)
             
             detection_in = [];
             for i=1:k
@@ -417,9 +417,32 @@ classdef SimElecRec
             end
             detection_in = unique(detection_in);
             X = zeros(1, size(D, 1));
-            X_hat = zeros(1, size(D, 1));
+            
             X(detection_in) = 1;
-            X_hat(unique(S(p, k))) = 1;
+            X_hat = zeros(1, size(D, 1));
+            I = unique(S(p, k));
+            X_hat(I) = 1;
+        end
+        function q = q_matrix(obj, S)
+            s = size(S,1);
+            q = sparse(s, s);
+            for i=1:s
+                a = find(sum(abs(S(:, 1:end-1) - ones(s, 1) * S(i, 2:end)), 2)==0);
+                q(i, a) = 1;
+            end
+        end
+        function sigma_q = q_function(obj, Q, S, s_plus)
+            s_p = zeros(size(S,1), 1);
+            s_p(s_plus) = 1;
+            sigma_q = Q*s_p;
+        end
+        function [Theta, X_hat, X, s_plus, s_minus, s_zero, sigma_q] = ...
+                reduced_cost_elem(obj, p, k, D, P, C, S, Q, theta_plus, theta_minus, theta_zero)
+            
+            [X, X_hat] = obj.X_function(p, S, D, k);
+            [s_plus, s_minus, s_zero] = obj.s_function(p, S);
+            sigma_q = obj.q_function(Q, S, s_plus);
+            Theta = sum(theta_plus(s_plus)) + sum(theta_minus(s_minus)) + sum(theta_zero(s_zero));
         end
     end
 end
