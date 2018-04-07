@@ -25,27 +25,41 @@ C = index_location_amp_time(:, 1);
 S = subtracks(:, 5:end);
 ```
 
-To find the grandtruth:
+To get $Q_{s_1s_2}$ (sparse matrix):
 ```
-grand_truth = Sim.grand_truth(D, P, C, S, k)
+Q = Sim.q_matrix(S);
 ```
-To find reduced cost, first we should compute theta functions:
-
+To get theta cost function:
 ```
 [theta_plus, theta_minus, theta_zero] = Sim.theta_cost(S);
 ```
-Then for a given track, p, the element of reduced cost is computed as following. 
+A track is represented by a binary vector, p, with the size of number of subtrcks.  
 
-1) cost function
-
+To find the grand truth track:
 ```
-s_plus, s_minus, s_zero = Sim.s_function(p, S)
-theta = sum(theta_plus(s_plus)) + sum(theta_minus(s_minus)) + sum(theta_zero(s_zero));
+grand_truth = Sim.grand_truth(D, P, C, S, k)
 ```
+For a given track, the element of reduced cost is computed as following:
 
-X and hat_X:
-
+1) $X$ and $\hat{X}$:
 ```
 X, X_hat = Sim.s_function(p, S);
+```
+2) $S^{0,+,-}$:
+```
+s_plus, s_minus, s_zero = Sim.s_function(p, S)
+```
+3) $\Theta$:
+```
+theta = sum(theta_plus(s_plus)) + sum(theta_minus(s_minus)) + sum(theta_zero(s_zero));
+```
+4) $\sum_{s_2}Q_{s_1s_2}S^+_{s_2p}$:
+```
+sigma_q = Sim.q_function(Q, S, s_plus);
+```
 
+All of this variables can be infered by one call also:
+```
+[Theta, X_hat, X, s_plus, s_minus, s_zero, sigma_q] = ...
+    Sim.reduced_cost_elem(p, k, D, P, C, S, Q, theta_plus, theta_minus, theta_zero);
 ```
