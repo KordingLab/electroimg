@@ -17,7 +17,7 @@ k = 2; % Number of detections in a sub-track.
 Then the required matrix can be extracted by:
 
 ```
-subtracks = s.subtracks(index_location_amp_time, k, 1);
+subtracks = Sim.subtracks(index_location_amp_time, k, 1);
 
 D = index_location_amp_time(:,2:6);
 P = swc_matrix(:, 7);
@@ -25,7 +25,7 @@ C = index_location_amp_time(:, 1);
 S = subtracks(:, 5:end);
 ```
 
-To get $Q_{s_1s_2}$ (sparse matrix):
+To get $Q_{s_1s_2}$ (sparse matrix with the size of number of subtracks):
 ```
 Q = Sim.q_matrix(S);
 ```
@@ -33,17 +33,17 @@ To get theta cost function:
 ```
 [theta_plus, theta_minus, theta_zero] = Sim.theta_cost(S);
 ```
-A track is represented by a binary vector, p, with the size of number of subtrcks.  
+A track is represented by a binary vector with the size of number of subtracks.  
 
 To find the grand truth track:
 ```
 grand_truth = Sim.grand_truth(D, P, C, S, k)
 ```
-For a given track, the element of reduced cost is computed as following:
+For a given track, p, the elements required to compute reduced cost (in the constrain of optimization) can be extracted as following:
 
 1) $X$ and $\hat{X}$:
 ```
-X, X_hat = Sim.X_function(p, S);
+X, X_hat = Sim.x_function(p, S);
 ```
 2) $S^{0,+,-}$:
 ```
