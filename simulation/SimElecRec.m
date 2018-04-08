@@ -409,7 +409,7 @@ classdef SimElecRec
                 end
             end
         end
-        function [X, X_hat] = X_function(obj, p, S, D, k)
+        function [X, X_hat] = x_function(obj, p, S, D, k)
             
             detection_in = [];
             for i=1:k
@@ -439,7 +439,7 @@ classdef SimElecRec
         function [Theta, X_hat, X, s_plus, s_minus, s_zero, sigma_q] = ...
                 reduced_cost_elem(obj, p, k, D, P, C, S, Q, theta_plus, theta_minus, theta_zero)
             
-            [X, X_hat] = obj.X_function(p, S, D, k);
+            [X, X_hat] = obj.x_function(p, S, D, k);
             [s_plus, s_minus, s_zero] = obj.s_function(p, S);
             sigma_q = obj.q_function(Q, S, s_plus);
             Theta = sum(theta_plus(s_plus)) + sum(theta_minus(s_minus)) + sum(theta_zero(s_zero));
