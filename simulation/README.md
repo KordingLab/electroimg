@@ -1,4 +1,4 @@
-# Installing
+# Usage
 The code is written in one class: SimElecRec.m
 Download the script and add the path to the Matlab path. Then drag neuron file (neuron1.mat) to the current folder. To run the code, type:
 
@@ -43,7 +43,7 @@ For a given track, the element of reduced cost is computed as following:
 
 1) $X$ and $\hat{X}$:
 ```
-X, X_hat = Sim.s_function(p, S);
+X, X_hat = Sim.X_function(p, S);
 ```
 2) $S^{0,+,-}$:
 ```
