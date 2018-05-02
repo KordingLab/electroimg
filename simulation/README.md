@@ -1,7 +1,10 @@
-# Usage
-The code is written in one class: SimElecRec.m
+This is a main code to simulate propagation of electrical activities through morphology of a neuron. 
+
+## Installation
 Download the script and add the path to the Matlab path. Then drag neuron file (neuron1.mat) to the current folder. To run the code, type:
 
+## Usage
+The code is orgonized by one class: SimElecRec.m
 ```
 Sim = SimElecRec;
 data = open('neuron1.mat');
@@ -14,7 +17,7 @@ k = 2; % Number of detections in a sub-track.
 [all_index_amp_active, all_location_detections, index_location_amp_time] = ...
     Sim.simulation(initialization, swc_matrix, T, dt);
 ```
-Then the required matrix can be extracted by:
+Then the subtracks for a fixed length k can be extracted by:
 
 ```
 subtracks = Sim.subtracks(index_location_amp_time, k, 1);
@@ -25,7 +28,7 @@ C = index_location_amp_time(:, 1);
 S = subtracks(:, 5:end);
 ```
 
-To get $Q_{s_1s_2}$ (sparse matrix with the size of number of subtracks):
+To get Q_{s_1, s_2} (sparse matrix with the size of number of subtracks):
 ```
 Q = Sim.q_matrix(S);
 ```
@@ -35,11 +38,11 @@ To get theta cost function:
 ```
 A track is represented by a binary vector with the size of number of subtracks.  
 
-To find the grand truth track:
+To find the ground truth track:
 ```
-grand_truth = Sim.grand_truth(D, P, C, S, k)
+ground_truth = Sim.ground_truth(D, P, C, S, k)
 ```
-For a given track, p, the elements required to compute reduced cost (in the constrain of optimization) can be extracted as following:
+For a given track, p, all the elements required to compute reduced cost (in the constrain of optimization) can be extracted as following:
 
 1) $X$ and $\hat{X}$:
 ```
@@ -58,7 +61,7 @@ theta = sum(theta_plus(s_plus)) + sum(theta_minus(s_minus)) + sum(theta_zero(s_z
 sigma_q = Sim.q_function(Q, S, s_plus);
 ```
 
-All of this variables can be infered by one call also:
+All of this variables can be infered once reduced_cost_elem is called:
 ```
 [Theta, X_hat, X, s_plus, s_minus, s_zero, sigma_q] = ...
     Sim.reduced_cost_elem(p, k, D, P, C, S, Q, theta_plus, theta_minus, theta_zero);
