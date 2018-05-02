@@ -1,4 +1,4 @@
-This is a main code to simulate propagation of electrical activities through morphology of a neuron. 
+Simulating propagation of electrical activities through morphology of a neuron. 
 
 ## Installation
 Download the script and add the path to the Matlab path. Then drag neuron file (neuron1.mat) to the current folder. To run the code, type:
@@ -65,4 +65,13 @@ All of this variables can be infered once reduced_cost_elem is called:
 ```
 [Theta, X_hat, X, s_plus, s_minus, s_zero, sigma_q] = ...
     Sim.reduced_cost_elem(p, k, D, P, C, S, Q, theta_plus, theta_minus, theta_zero);
+```
+## Using for tracking the segments
+to find the solution of reduced cost:
+```
+p = Sim.find_solution(starting_point, S, X)
+```
+to plot the solution:
+```
+Sim.plot_solution(D, S, p)
 ```
