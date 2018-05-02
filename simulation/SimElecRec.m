@@ -361,8 +361,8 @@ classdef SimElecRec
             end
             save(save_path,'swc')
         end
-        function grand_t = grand_truth(obj, D, P, C, S, k)
-            grand_t = [];
+        function ground_t = ground_truth(obj, D, P, C, S, k)
+            ground_t = [];
             for i=1:max(C)
                 par = i;
                 grand_parent = zeros(1,k);
@@ -381,16 +381,21 @@ classdef SimElecRec
                 
                 a = find(sum(abs(S- ones(size(S, 1), 1) * index_in_C), 2)==0);
                 if ~isempty(a)
-                    grand_t(end+1) = a;
+                    ground_t(end+1) = a;
                 end
             end
         end
         function [theta_plus, theta_minus, theta_zero] = theta_cost(obj, S)
-            theta_plus = ones(1, size(S,1));
-            theta_minus = ones(1, size(S,1));
+            % this function compute the cost of subtracks. theta_zero is
+            % the cost for starting and theta_plus and theta_minus are
+            % the cost of ending and starting at branches.
+            % Notice that for Aistats, theta = theta_plus
+            theta_plus = -ones(1, size(S,1));
+            theta_minus = -ones(1, size(S,1));
             theta_zero = ones(1, size(S,1));
         end
         function [s_plus, s_minus, s_zero] = s_function(obj, p, S)
+            %
             s_plus = [];
             s_minus = [];
             s_zero = [];
@@ -410,7 +415,8 @@ classdef SimElecRec
             end
         end
         function [X, X_hat] = x_function(obj, p, S, D, k)
-            
+            % This function gets back the incident of a detection on the subtracks
+            %
             detection_in = [];
             for i=1:k
                 detection_in(end+1:end+length(p)) = S(p,i);
@@ -438,11 +444,40 @@ classdef SimElecRec
         end
         function [Theta, X_hat, X, s_plus, s_minus, s_zero, sigma_q] = ...
                 reduced_cost_elem(obj, p, k, D, P, C, S, Q, theta_plus, theta_minus, theta_zero)
-            
+            % It gets backs all the elements that are required for
+            % computing the reduced cost.
             [X, X_hat] = obj.x_function(p, S, D, k);
             [s_plus, s_minus, s_zero] = obj.s_function(p, S);
             sigma_q = obj.q_function(Q, S, s_plus);
             Theta = sum(theta_plus(s_plus)) + sum(theta_minus(s_minus)) + sum(theta_zero(s_zero));
+        end
+        function plot_solution(obj, D, S, p)
+            % It shows the solution of the problem 
+            plot(D(S(p,1),1), D(S(p,2),2))
+        end
+        function C = triplet(obj, X)
+            n = length(X)
+            C = zeros(n^3)
+            for i = 1:n
+                for j = 1:n
+                    for s = 1:n
+                        if X(i)*X(j)+  X(i)*X(s) +  X(j)*X(s) > 2:
+                            C(i*j*k) = 1;
+                        end
+                    end
+                end
+            end
+        end
+        
+        function p = find_solution(obj, starting_point, S, X)
+            % p is the solution of ilp
+            [theta_plus, theta_minus, theta_zero] = theta_cost(obj, S);
+            C = triplet(obj, X)
+            len_triplet = length(C)
+            len_incident = length(X)
+            A = [ones(len_incident, 1); ones(len_triplet, 1); theta_plus]
+            p = linprog(- ones(len_incident+ len_triplet, 1), A, 0);
+            p = round(p);
         end
     end
 end
