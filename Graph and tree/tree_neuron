@@ -1,55 +1,66 @@
+function [x, y, z, time, W, E] = tree_neuron(path, number_of_noise)
 
-function [x,y,z,t,U,W,E_ground] = tree_neuron(path)
+%%%%%%%%%% Reading the data %%%%%%%%%%
 data = open(path);
-n = data.neuron;
-neuron_locations = n(:, 3:5);
-Sim = SimElecRec;
-initialization = [0,0,0,1];
-swc_matrix = n(1:end, :);
-T = 150;
-dt = 1;
-k = 2;
-% Simulation
-[all_index_amp_active, all_location_detections, index_location_amp_time] = ...
-    Sim.simulation(initialization, swc_matrix, T, dt);
-subtracks = Sim.subtracks(index_location_amp_time, k, 1);
-D = index_location_amp_time(:,2:6);
-P = n(1:end, 7);
-S = subtracks(:, 5:end);
-
-V = 1:size(index_location_amp_time, 1);
-W = sparse(length(V), length(V));
-
-% space time
-x = ones(length(V),1);
-x(index_location_amp_time(:,1)) = index_location_amp_time(:,2);
-
-y = ones(length(V),1);
-y(index_location_amp_time(:,1)) = index_location_amp_time(:,3);
-
-z = ones(length(V),1);
-z(index_location_amp_time(:,1)) = index_location_amp_time(:,4);
-
-t = ones(length(V),1);
-t(index_location_amp_time(:,1)) = index_location_amp_time(:,6);
-
-% cost edges
-for i = 1:size(S, 1)
-    i1 = S(i,1);
-    i2 = S(i, 2);
-    W(i1, i2) = sqrt((x(i1)-x(i2))^2+(y(i1)-y(i2))^2+(z(i1)-z(i2))^2)+(t(i1)-t(i2))^2;
+swc_matrix = data.neuron;
+neuron_locations = transpose(swc_matrix(:, 3:5));
+parent_index = swc_matrix(:, 7);
+n_nodes = size(swc_matrix, 1);
+% Normalize the values of the location between 0 and 1
+for i = 1:3
+    cor = neuron_locations(i,:);
+    cor = (cor - min(cor))/(max(cor)-min(cor));
+    neuron_locations(i,:) = cor;
 end
 
-% cost for branching
-U = Inf*ones(length(V),1);
-for i=V
-    if length(find(P==i))==2
-        U(i) = 1;
+%%%%%%%%%% Initialization %%%%%%%%%%
+% detections are the nodes on the neurons plus other noise
+number_of_detections = number_of_noise+n_nodes;
+graph  = randperm(number_of_detections);
+% index of neuron's node in the graph
+neuron_index = graph(1:n_nodes);
+% initialize the location for all detections with random values
+locations = rand(3, number_of_detections);
+time = ones(1, number_of_detections);
+locations(:, neuron_index) = neuron_locations;
+
+%%%%%%%%%% Active nodes %%%%%%%%%%
+t = 1;
+active_neuron_index = 1;
+% While loop to findthe active nodes on the neuron at each time
+while (length(active_neuron_index) ~= 0)
+    activties = [];
+    for i=active_neuron_index
+        activties = [activties, transpose(find(parent_index == i))];
+    end
+    time(neuron_index(activties)) = t+1;
+    t = t + 1;
+    active_neuron_index = activties;
+end
+max_time = max(time);
+% Filling the rest of time with random values
+time(graph(n_nodes+1:end)) = floor(max_time*rand(1,number_of_detections-n_nodes))+1;
+
+%%%%%%%%%% Outputing %%%%%%%%%%
+% W matrix as sparse matrix of the cost function
+W = sparse(number_of_detections, number_of_detections);
+for i = 2:max_time
+    t_i = find(time == i);
+    t_i_1 = find(time == i-1);
+    for j = t_i
+        for k = t_i_1
+            W(j,k) = sqrt(sum((locations(:,j)-locations(:,k)).^2));
+        end
     end
 end
-% ground truth
-E_ground = sparse(length(V), length(V));
-for i=V(2:end)
-    E_ground(P(i), i) = 1;
+
+% E matrix as sparse matrix that shows the neuron
+E = sparse(number_of_detections, number_of_detections);
+for i =2:n_nodes
+    E(neuron_index(i), neuron_index(parent_index(i))) = 1;
 end
-end
+
+% xys of locations
+x = locations(1, :);
+y = locations(2, :);
+z = locations(3, :);
