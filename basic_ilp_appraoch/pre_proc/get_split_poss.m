@@ -7,4 +7,8 @@ has_kid_list=find(G.B.num_kids>0.5);
 
 split_list=has_kid_list(  randperm(numel(has_kid_list)));
 split_list=split_list(1:num_split);
-G.split_list=split_list;
+
+sp=[];
+sp.split_list=split_list
+sp.ns=numel(split_list);
+G.sp=sp;
