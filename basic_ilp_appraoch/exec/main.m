@@ -22,5 +22,5 @@ my_output_file='../output/basic_out.mat';
 
 F=load_data(my_input_file);
 G=pre_process(F,my_params);
-H=call_basic_ilp_solve(F);
+H=call_basic_ilp_solve(G);
 save(my_output_file,'H');

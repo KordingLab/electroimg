@@ -1,10 +1,12 @@
 function H=call_basic_ilp_solve(G)
 
+G
 T=G.ILP;
 time_solve=tic();
 [sol,obj,flag]=intlinprog(T.C,T.inds_bin,T.A,T.B,T.Aeq,T.Beq,T.LB,T.UB,T.opts);
-time_solve=toc();
+time_solve=toc(time_solve);
 if(flag <0.5)
+    flag
     disp('prob HERE')
     pause
 end

@@ -9,6 +9,7 @@ ILP.C=[G.B.theta(:)+G.params.edge_offset;G.params.split_cost*ones(G.sp.ns,1)];
 v1=G.B.EI(:,2);
 v2=G.B.EI(:,1);
 v3=ones(G.B.NE,1);
+
 A1=sparse(v1,v2,v3,G.B.N,G.B.NE+G.B.N);
 B1=ones(G.B.N,1,1);
 %the number of children you can have is upper bounded by
@@ -23,7 +24,7 @@ A2_a=sparse(v1,v2,v3,G.B.N,G.B.NE);
 A2_b=-speye(G.B.N,G.B.N);
 A2=[A2_a,A2_b]-A1;
 v1=G.sp.split_list;
-v2=v1*0;
+v2=(v1*0)+1;
 v3=(v1*0)+1;
 B2=sparse(v1,v2,v3,G.B.N,1);
 
@@ -36,7 +37,7 @@ v2=G.B.EI(:,2);
 v3=ones(G.B.NE,1);
 A3_a=sparse(v1,v2,v3,G.B.N,G.B.NE+G.B.N);
 A3_b=-A1*2;
-
+A3=A3_a-A3_b;
 B3=2*B2;
 
 v2=G.B.NE+[1:G.B.N];
@@ -58,4 +59,6 @@ ILP.Beq=[];
 ILP.UB=(ILP.C*0)+1;
 ILP.LB=(ILP.C*0);
 
-ILP.opts=optimoptions('display','off');
+ILP.opts=optimoptions('intlinprog','display','off');
+
+G.ILP=ILP;
