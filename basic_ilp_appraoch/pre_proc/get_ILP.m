@@ -2,7 +2,7 @@ function G=get_ILP(G)
 
 ILP=[];
 
-ILP.C=[G.B.theta(:)+G.opt.edge_offset,split_cost*ones(G.sp.ns,1)];
+ILP.C=[G.B.theta(:)+G.params.edge_offset;G.params.split_cost*ones(G.sp.ns,1)];
 
 %number of parents that you have is bounded by 1
 

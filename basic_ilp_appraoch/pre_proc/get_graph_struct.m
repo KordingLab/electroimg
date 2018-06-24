@@ -1,13 +1,13 @@
-function B=get_graph_struct(G)
+function G=get_graph_struct(G)
 
 B=[];
-[~,B.old_2_new_order]=sort(G.B.time);
-[~,B.new_2_old_order]=sort(old_2_new_order);
+[~,B.old_2_new_order]=sort(G.F.time);
+[~,B.new_2_old_order]=sort(B.old_2_new_order);
 
 B.N=numel(B.old_2_new_order);
-B.W=G.F.W(old_2_new_order,old_2_new_order);
+B.W=G.F.W(B.old_2_new_order,B.old_2_new_order);
 
-B.E_ind_on=find(abs(B.W)>G.param.epsilon);
+B.E_ind_on=find(abs(B.W)>G.params.epsilon);
 [i1,i2]=ind2sub([B.N,B.N],B.E_ind_on);
 B.EI=[i1,i2];
 inds_flip=find(B.EI(:,1)>B.EI(:,2));
@@ -20,10 +20,10 @@ end
 B.NE=numel(B.E_ind_on);
 B.theta=B.W(B.E_ind_on);
 
-B.par_list=cell(G.B.N,1);
-B.kid_list=cell(G.B.N,1);
-B.num_kids=zeros(G.B.N,1);
-B.num_pars=zeros(G.B.N,1);
+B.par_list=cell(B.N,1);
+B.kid_list=cell(B.N,1);
+B.num_kids=zeros(B.N,1);
+B.num_pars=zeros(B.N,1);
 
 for(e=1:B.NE)
     
@@ -47,3 +47,6 @@ for(e=1:B.NE)
 end
 B.no_par_list=find(B.num_pars<0.5);
 G.B=B;
+disp('at end')
+G
+disp('at he')
