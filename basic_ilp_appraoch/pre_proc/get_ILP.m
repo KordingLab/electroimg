@@ -39,12 +39,19 @@ A3_b=-A1*2;
 
 B3=2*B2;
 
-    
-A=[A1;A2;A3];
+v2=G.B.NE+[1:G.B.N];
+v1=ones(G.B.N,1);
+v3=ones(G.B.N,1);
+A0=sparse(v1,v2,v3,1,G.B.NE+G.B.N);
+
+B0=G.params.max_splits;
+A=[A0;A1;A2;A3];
 A=A(:,[ [1:G.B.NE],G.sp.split_list(:)' ]);
 ILP.A=A;
-ILP.B=[B1;B2;B3];
-    
+ILP.B=[B0;B1;B2;B3];
+
+ILP.inds_bin=G.B.NE+G.sp.split_list;
+
 ILP.Aeq=[];
 ILP.Beq=[];
 
