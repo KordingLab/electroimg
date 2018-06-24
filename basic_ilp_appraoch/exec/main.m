@@ -12,7 +12,7 @@ my_params.epsilon=.000001;
 
 addpath ../body
 addpath ../pre_proc
-addpath ../jyFun
+addpath ../../Athena/jy_fun
 
 my_input_file='../data/roosbeh_basic_data.mat';
 my_output_file='../output/basic_out.mat';
