@@ -34,5 +34,24 @@ for(e=desc.e_act(:)')
     end
     
 end
+
 desc.full_sol=[desc.sol(:);double(desc.n_kid>1.5)];
+
+%if(numel(desc.sol(:))~=G.B.NE)
+%    disp('bad hre')
+%    pause
+%end
+%if(numel(double(desc.n_kid>1.5))~=G.B.N)
+%   disp('diff bad here') 
+%   pause
+%end
+%if(G.B.NE+G.B.N~=numel(desc.full_sol))
+ %   disp('2diff bad here') 
+
+%    pause
+%end
+jy_out_val('G.B.NE+G.B.N',G.B.NE+G.B.N)
+jy_out_sz('(desc.full_sol)',desc.full_sol)
+pause
+
 desc.par_old=G.B.new_2_old_order(desc.par>0.5);

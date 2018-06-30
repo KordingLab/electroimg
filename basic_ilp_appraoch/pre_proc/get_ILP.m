@@ -2,7 +2,7 @@ function G=get_ILP(G)
 
 ILP=[];
 
-ILP.C=[G.B.theta(:)+G.params.edge_offset;G.params.split_cost*ones(G.sp.ns,1)];
+ILP.C=[G.B.theta(:)+G.params.edge_offset;G.params.split_cost*ones(G.B.N,1)];
 
 %number of parents that you have is bounded by 1
 
@@ -56,8 +56,11 @@ if(B0<-0.5)
 end
 A=[A0;A1;A2;A3];
 ILP.A_orig=A;
-A=A(:,[ [1:G.B.NE],G.sp.split_list(:)' ]);
-
+inds_keep=[ [1:G.B.NE],G.B.NE+G.sp.split_list(:)' ];
+A=A(:,inds_keep);
+ILP.inds_keep=inds_keep;
+ILP.C_orig=ILP.C;
+ILP.C=ILP.C(inds_keep);
 ILP.A0=A0;
 ILP.A1=A1;
 ILP.A2=A2;

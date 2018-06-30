@@ -25,6 +25,9 @@ H.G=G;
 num_splits_GT=sum(G.GT.n_kid>1.5);
 H.GT_obj=sum(G.GT.sol_vec.*G.ILP.C(1:G.B.NE))+(G.params.split_cost*num_splits_GT);
 
+jy_out_sz('G.GT.full_sol',G.GT.full_sol)
+jy_out_sz('G.ILP.C',G.ILP.C)
+H.GT_obj2=sum(G.GT.full_sol(:).*G.ILP.C_orig(:));
 slacks_GT=-G.ILP.A_orig*G.GT.full_sol+G.ILP.B;
 if(min(slacks_GT)<-.000001)
     
@@ -32,6 +35,7 @@ if(min(slacks_GT)<-.000001)
    s1=-G.ILP.A1*G.GT.full_sol+G.ILP.B1;
    s2=-G.ILP.A2*G.GT.full_sol+G.ILP.B2;
    s3=-G.ILP.A3*G.GT.full_sol+G.ILP.B3;
+   jy_out_val('sum(G.GT.full_sol.*G.ILP.C)',sum(G.GT.full_sol.*G.ILP.C))
        save('gtIssue')
    jy_out_val('min(s0)',min(s0))
    jy_out_val('min(s1)',min(s1))
@@ -42,5 +46,12 @@ if(min(slacks_GT)<-.000001)
    pause
 end
 
+if(H.GT_obj<obj || abs(H.GT_obj2-H.GT_obj)>.00001)
+    disp('GT cant be better than optimal')
+    jy_out_val('H.GT_obj2')
+    jy_out_val('H.GT_obj')
+    save('badHere')
+    pause
+end
 jy_out_val('H.GT_obj',H.GT_obj)
 jy_out_val('H.GT_obj',H.GT_obj)
