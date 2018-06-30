@@ -39,9 +39,9 @@ while (length(active_neuron_index) ~= 0)
 end
 max_time = max(time);
 % Filling the rest of time with random values
-time(graph(n_nodes+1:end)) = floor(max_time*rand(1,number_of_detections-n_nodes))+1;
+time(graph(n_nodes+1:end)) = floor((max_time-1)*rand(1,number_of_detections-n_nodes))+2;
 
-%%%%%%%%%% Outputing %%%%%%%%%%
+%%%%%%%%%% Outputing %%%%%%%%%%soret
 % W matrix as sparse matrix of the cost function
 W = sparse(number_of_detections, number_of_detections);
 for i = 2:max_time
@@ -64,3 +64,12 @@ end
 x = locations(1, :);
 y = locations(2, :);
 z = locations(3, :);
+
+% sorts the indices by time
+[~, argsort] = sort(time);
+time = time(argsort);
+x = x(argsort);
+y = y(argsort);
+z = z(argsort);
+W = W(argsort,argsort);
+E = E(argsort,argsort);
