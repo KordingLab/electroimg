@@ -1,6 +1,5 @@
 function H=call_basic_ilp_solve(G)
 
-G
 T=G.ILP;
 time_solve=tic();
 [sol,obj,flag]=intlinprog(T.C,T.inds_bin,T.A,T.B,T.Aeq,T.Beq,T.LB,T.UB,T.opts);
@@ -12,7 +11,6 @@ if(flag <0.5)
     pause
 end
 
-save('H_sol')
 H=[];
 H.sol=sol;
 H.obj=obj;
@@ -25,8 +23,8 @@ H.G=G;
 num_splits_GT=sum(G.GT.n_kid>1.5);
 H.GT_obj=sum(G.GT.sol_vec.*G.ILP.C(1:G.B.NE))+(G.params.split_cost*num_splits_GT);
 
-jy_out_sz('G.GT.full_sol',G.GT.full_sol)
-jy_out_sz('G.ILP.C',G.ILP.C)
+%jy_out_sz('G.GT.full_sol',G.GT.full_sol)
+%jy_out_sz('G.ILP.C',G.ILP.C)
 H.GT_obj2=sum(G.GT.full_sol(:).*G.ILP.C_orig(:));
 slacks_GT=-G.ILP.A_orig*G.GT.full_sol+G.ILP.B;
 if(min(slacks_GT)<-.000001)
@@ -53,5 +51,5 @@ if(H.GT_obj<obj || abs(H.GT_obj2-H.GT_obj)>.00001)
     save('badHere')
     pause
 end
-jy_out_val('H.GT_obj',H.GT_obj)
-jy_out_val('H.GT_obj',H.GT_obj)
+%jy_out_val('H.GT_obj',H.GT_obj)
+%jy_out_val('H.GT_obj',H.GT_obj)

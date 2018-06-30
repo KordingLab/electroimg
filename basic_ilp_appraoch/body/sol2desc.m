@@ -50,8 +50,8 @@ desc.full_sol=[desc.sol(:);double(desc.n_kid>1.5)];
 
 %    pause
 %end
-jy_out_val('G.B.NE+G.B.N',G.B.NE+G.B.N)
-jy_out_sz('(desc.full_sol)',desc.full_sol)
-pause
+%jy_out_val('G.B.NE+G.B.N',G.B.NE+G.B.N)
+%jy_out_sz('(desc.full_sol)',desc.full_sol)
+%pause
 
 desc.par_old=G.B.new_2_old_order(desc.par>0.5);

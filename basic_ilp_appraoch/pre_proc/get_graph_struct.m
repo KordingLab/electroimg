@@ -47,6 +47,3 @@ for(e=1:B.NE)
 end
 B.no_par_list=find(B.num_pars<0.5);
 G.B=B;
-disp('at end')
-G
-disp('at he')
