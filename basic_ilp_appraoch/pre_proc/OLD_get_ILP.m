@@ -7,7 +7,7 @@ ILP.C=[G.B.theta(:)+G.params.edge_offset;G.params.split_cost*ones(G.sp.ns,1)];
 %number of parents that you have is bounded by 1
 
 v1=G.B.EI(:,2);
-v2=[1:G.B.NE];%G.B.EI(:,1);
+v2=G.B.EI(:,1);
 v3=ones(G.B.NE,1);
 
 A1=sparse(v1,v2,v3,G.B.N,G.B.NE+G.B.N);
@@ -18,7 +18,7 @@ B1=ones(G.B.N,1,1);
     %plus 1 if you are a split node
 
 v1=G.B.EI(:,1);
-v2=[1:G.B.NE];%G.B.EI(:,2);
+v2=G.B.EI(:,2);
 v3=ones(G.B.NE,1);
 A2_a=sparse(v1,v2,v3,G.B.N,G.B.NE);
 A2_b=-speye(G.B.N,G.B.N);
@@ -33,14 +33,14 @@ B2=sparse(v1,v2,v3,G.B.N,1);
 
     %  number of parents you can have is bounded by 1
 v1=G.B.EI(:,1);
-v2=[1:G.B.NE];%G.B.EI(:,2);
+v2=G.B.EI(:,2);
 v3=ones(G.B.NE,1);
 A3_a=sparse(v1,v2,v3,G.B.N,G.B.NE+G.B.N);
 A3_b=-A1*2;
-A3=A3_a+A3_b;
+A3=A3_a-A3_b;
 B3=2*B2;
 A3=A3(2:end,:);
-B3=B3(2:end);
+B3=B3(2:end,:);
 
 A2=A2(2:end,:);
 B2=B2(2:end);

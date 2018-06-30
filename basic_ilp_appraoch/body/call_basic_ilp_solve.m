@@ -12,6 +12,7 @@ if(flag <0.5)
     pause
 end
 
+save('H_sol')
 H=[];
 H.sol=sol;
 H.obj=obj;
@@ -32,7 +33,11 @@ if(min(slacks_GT)<-.000001)
    s2=-G.ILP.A2*G.GT.full_sol+G.ILP.B2;
    s3=-G.ILP.A3*G.GT.full_sol+G.ILP.B3;
        save('gtIssue')
-
+   jy_out_val('min(s0)',min(s0))
+   jy_out_val('min(s1)',min(s1))
+   jy_out_val('min(s2)',min(s2))
+   jy_out_val('min(s3)',min(s3))
+    
    disp('isssue here')
    pause
 end

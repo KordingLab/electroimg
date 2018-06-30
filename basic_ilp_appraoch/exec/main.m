@@ -14,7 +14,7 @@ addpath ../body
 addpath ../pre_proc
 addpath ../../Athena/jy_fun
 
-my_input_file='../data/roosbeh_basic_data.mat';
+my_input_file='../data/roosbeh_sort.mat';
 my_output_file='../output/basic_out.mat';
 
 

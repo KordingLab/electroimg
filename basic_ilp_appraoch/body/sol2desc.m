@@ -24,10 +24,11 @@ for(e=desc.e_act(:)')
     else
         desc.kids_mat(i1,2)=i2;
     end
-    if(desc.n_kid(i1)>2.5)
+    if(desc.n_kid(i1)>2.5 && i1>1.5)
         disp('TOO MANY KIDS')
         i1
         i2
+        
         jy_out_val('desc.kids{i1}',desc.kids{i1})
         pause
     end
