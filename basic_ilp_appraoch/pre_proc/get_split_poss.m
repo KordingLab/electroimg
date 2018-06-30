@@ -10,6 +10,6 @@ num_split=min([num_split,numel(split_list)]);
 split_list=split_list(1:num_split);
 
 sp=[];
-sp.split_list=split_list
+sp.split_list=split_list;
 sp.ns=numel(split_list);
 G.sp=sp;
