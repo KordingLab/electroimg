@@ -7,6 +7,7 @@ time_solve=tic();
 time_solve=toc(time_solve);
 if(flag <0.5)
     flag
+    save('tata')
     disp('prob HERE')
     pause
 end
