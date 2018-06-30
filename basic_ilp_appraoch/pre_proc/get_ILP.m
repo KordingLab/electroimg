@@ -50,7 +50,19 @@ if(B0<-0.5)
     B0=G.B.N;
 end
 A=[A0;A1;A2;A3];
+ILP.A_orig=A;
 A=A(:,[ [1:G.B.NE],G.sp.split_list(:)' ]);
+
+ILP.A0=A0;
+ILP.A1=A1;
+ILP.A2=A2;
+ILP.A3=A3;
+
+ILP.B0=B0;
+ILP.B1=B1;
+ILP.B2=B2;
+ILP.B3=B3;
+
 
 ILP.A=A;
 ILP.B=[B0;B1;B2;B3];

@@ -12,3 +12,5 @@ GT=sol2desc(G,sol_vec);
 GT.sol_vec=sol_vec;
 GT.bar_E=bar_E;
 G.GT=GT;
+
+
