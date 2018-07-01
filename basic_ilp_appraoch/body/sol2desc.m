@@ -36,7 +36,14 @@ for(e=desc.e_act(:)')
 end
 
 desc.full_sol=[desc.sol(:);double(desc.n_kid>1.5)];
-
+no_par=setdiff( find(desc.par==0),1);
+has_kid=find(desc.n_kid>0.5);
+bad_inds=intersect(no_par,has_kid);
+if(numel(bad_inds)>0.5)
+    disp('yuck')
+    save('tata')
+    pause
+end
 %if(numel(desc.sol(:))~=G.B.NE)
 %    disp('bad hre')
 %    pause

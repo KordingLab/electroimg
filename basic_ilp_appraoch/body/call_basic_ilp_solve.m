@@ -1,7 +1,9 @@
 function H=call_basic_ilp_solve(G)
 
 T=G.ILP;
+T.inds_bin=[1:numel(T.C)];
 time_solve=tic();
+
 [sol,obj,flag]=intlinprog(T.C,T.inds_bin,T.A,T.B,T.Aeq,T.Beq,T.LB,T.UB,T.opts);
 time_solve=toc(time_solve);
 if(flag <0.5)
