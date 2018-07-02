@@ -36,7 +36,7 @@ swc = get_swc(parent, x, y, z);
 `parent`: indication of nodes on the neuron. If an array is non zero, its on the neuron. the value is the parent index.
 `x, y, z`: The locations of all the detections
 
-## Returns:
+#### Returns:
 `swc`: the n times 7 swc matrix.
 
 ## plot_neuron
