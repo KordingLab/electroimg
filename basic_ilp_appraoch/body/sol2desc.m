@@ -7,7 +7,7 @@ desc.n_par=zeros(G.B.N,1);
 desc.n_kid=zeros(G.B.N,1);
 desc.par=zeros(G.B.N,1);
 desc.kids=cell(G.B.N,1);
-desc.kids_mat=zeros(G.B.N,2);
+%desc.kids_mat=zeros(G.B.N,G.params.max_kids);
 
 for(e=desc.e_act(:)')
     
@@ -19,12 +19,12 @@ for(e=desc.e_act(:)')
     desc.n_kid(i1)=desc.n_kid(i1)+1;
     
     desc.kids{i1}=[desc.kids{i1},i2];
-    if(desc.n_kid(i1)<1.5)
-        desc.kids_mat(i1,1)=i2;
-    else
-        desc.kids_mat(i1,2)=i2;
-    end
-    if(desc.n_kid(i1)>2.5 && i1>1.5)
+    %if(desc.n_kid(i1)>=G.params.max_kids+0.5)
+    %    desc.kids_mat(i1, desc.n_kid(i1) )=i2;
+    %else
+    %    desc.kids_mat(i1, desc.n_kid(i1) )=i2;
+    %end
+    if(desc.n_kid(i1)>G.params.max_kids+0.6 && i1>1.5)
         disp('TOO MANY KIDS')
         i1
         i2
