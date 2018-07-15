@@ -1,5 +1,13 @@
-%
+%% Simulating Data
+clc
 clear
+path = '/Users/RoozbehFarhoudi/Documents/Repos/electroimg/Graph and tree/neuron_file/neuron1.mat';
+[x, y, z, time, W, E] = tree_neuron(path, 500);
+x = x - x(1);
+y = y - y(1);
+z = z - z(1);
+
+%% Running the slover
 close all
 
 my_params=[];
@@ -25,3 +33,16 @@ F=load_data(my_input_file);
 G=pre_process(F,my_params);
 H=call_basic_ilp_solve(G);
 save(my_output_file,'H');
+
+%% The extrcted neuron
+par = H.Ebar.par;
+par(1) = 1;
+
+%% ground truth
+par = parent_index(E);
+
+%% Making swc output
+swc = get_swc(par, x, y, z);
+
+%% Plot the tree
+plot_neuron(swc)
