@@ -39,14 +39,11 @@ A3_a=sparse(v1,v2,v3,G.B.N,G.B.NE+G.B.N);
 A3_b=-A1*(G.params.max_kids);
 A3=A3_a+A3_b;
 B3=2*B2;
+A3=A3(2:end,:);
+B3=B3(2:end);
 
-%remove rows corresponding to somas
-rows_keep=setdiff([1:G.B.N],G.B.no_par_list);
-A3=A3(rows_keep,:);
-B3=B3(rows_keep);
-
-A2=A2(rows_keep,:);
-B2=B2(rows_keep);
+A2=A2(2:end,:);
+B2=B2(2:end);
 
 v2=G.B.NE+[1:G.B.N];
 v1=ones(G.B.N,1);

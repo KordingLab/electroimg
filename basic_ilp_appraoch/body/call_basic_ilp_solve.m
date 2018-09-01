@@ -6,6 +6,7 @@ time_solve=tic();
 
 [sol,obj,flag]=intlinprog(T.C,T.inds_bin,T.A,T.B,T.Aeq,T.Beq,T.LB,T.UB,T.opts);
 time_solve=toc(time_solve);
+save('moon')
 if(flag <0.5)
     flag
     save('tata')

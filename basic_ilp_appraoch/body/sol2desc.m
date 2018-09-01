@@ -24,7 +24,7 @@ for(e=desc.e_act(:)')
     %else
     %    desc.kids_mat(i1, desc.n_kid(i1) )=i2;
     %end
-    if(desc.n_kid(i1)>G.params.max_kids+0.6 && i1>1.5)
+    if(desc.n_kid(i1)>G.params.max_kids+0.6 && ~ismember(i1,G.B.no_par_list))
         disp('TOO MANY KIDS')
         i1
         i2
@@ -36,7 +36,7 @@ for(e=desc.e_act(:)')
 end
 
 desc.full_sol=[desc.sol(:);double(desc.n_kid>1.5)];
-no_par=setdiff( find(desc.par==0),1);
+no_par=setdiff( find(desc.par==0),G.B.no_par_list);
 has_kid=find(desc.n_kid>0.5);
 bad_inds=intersect(no_par,has_kid);
 if(numel(bad_inds)>0.5)
