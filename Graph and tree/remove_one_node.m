@@ -1,10 +1,15 @@
-function subsample_neuron = remove_one_node(neuron)
+function [subsample_neuron, node_to_delete] = remove_one_node(neuron, stick_binary_tree)
 
 subsample_neuron = neuron;
 children_node = [];
-while length(children_node)~=1
-node_to_delete = floor((size(subsample_neuron, 1)-1)*rand)+2;
-children_node = find(subsample_neuron(:,7) == node_to_delete);
+if stick_binary_tree==1
+    while length(children_node)~=1
+        node_to_delete = floor((size(subsample_neuron, 1)-1)*rand)+2;
+        children_node = find(subsample_neuron(:,7) == node_to_delete);
+    end
+else
+    node_to_delete = floor((size(subsample_neuron, 1)-1)*rand)+2;
+    children_node = find(subsample_neuron(:,7) == node_to_delete);
 end
 par_node = subsample_neuron(node_to_delete,7);
 subsample_neuron(children_node, 7) = par_node;
